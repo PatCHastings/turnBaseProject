@@ -1,7 +1,7 @@
-// src/App.jsx
+import "./App.css";
 import React from "react";
-import PlayerComponent from "./components/Player";
-import EnemyComponent from "./components/Enemy";
+import PlayerComponent from "./components/player/Player";
+import EnemyComponent from "./components/enemy/Enemy";
 
 const App = () => {
   return (

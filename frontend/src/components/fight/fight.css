@@ -1,0 +1,4 @@
+.fight-screen {
+  display: flex;
+  justify-content: space-between;
+}

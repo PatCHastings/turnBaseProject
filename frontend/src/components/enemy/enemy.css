@@ -1,7 +1,51 @@
-.monsterInfo {
+.monster-container {
+  margin: 20px;
+}
+
+.generate-enemy {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 1px;
+  justify-content: center;
+  margin: 20px;
+}
+
+button {
   margin: 5px;
+}
+
+.stat-block {
+  padding: 20px;
+  border: 2px solid #000;
+  box-shadow: 5px 5px 0 #888;
+  max-width: 500px;
+  max-height: 500px;
+  margin: auto;
+  overflow: scroll;
+}
+
+.stat-block h3 {
+  margin-top: 0;
+}
+
+.stat-block img.monster-image {
+  width: 100%;
+  height: auto;
+}
+
+.monster-info,
+.monster-stats {
+  margin: 10px 0;
+}
+
+.monster-info p,
+.monster-stats p {
+  margin: 5px 0;
+}
+
+ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+ul li {
+  margin: 5px 0;
 }

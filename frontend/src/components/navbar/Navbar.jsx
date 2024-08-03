@@ -1,16 +1,17 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import { useGame } from "../gameContext/GameContext";
+import { useSelector } from "react-redux";
 import "./navbar.css";
 
 function Navbar() {
-  const { player, enemy } = useGame();
+  const player = useSelector((state) => state.player);
+  const enemy = useSelector((state) => state.enemy);
 
   return (
     <nav className="navbar">
       <ul className="nav-links">
         <li>
-          <Link to={player ? "/player" : "/createPlayer"}>
+          <Link to={player.name ? "/player" : "/createPlayer"}>
             {player ? "Player" : "Create Player"}
           </Link>
         </li>
@@ -18,8 +19,8 @@ function Navbar() {
           <Link to="/Fight">Fight</Link>
         </li>
         <li>
-          <Link to={enemy ? "/enemy" : "/createEnemy"}>
-            {enemy ? "Monster" : "Generate Enemy"}
+          <Link to={enemy.enemyName ? "/enemy" : "/createEnemy"}>
+            {enemy ? "Enemy" : "Generate Enemy"}
           </Link>
         </li>
       </ul>

@@ -1,11 +1,12 @@
 import "./enemy.css";
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { useGame } from "../gameContext/GameContext";
+import { useDispatch, useSelector } from "react-redux";
+import { setEnemy } from "../store/Store";
 
 const EnemyComponent = () => {
-  const { setEnemy } = useGame();
-  const [enemy, setEnemyState] = useState(null);
+  const dispatch = useDispatch();
+  const enemy = useSelector((state) => state.enemy);
   const [monsters, setMonsters] = useState([]);
 
   useEffect(() => {
@@ -40,7 +41,7 @@ const EnemyComponent = () => {
         }
       );
       console.log("Enemy saved:", response.data);
-      setEnemy(response.data); // Update the context state
+      dispatch(setEnemy(response.data)); // Update the context state
     } catch (error) {
       console.error("Error saving enemy:", error);
     }
@@ -83,8 +84,7 @@ const EnemyComponent = () => {
         actions: response.data.actions,
         legendaryActions: response.data.legendary_actions,
       };
-      setEnemyState(newEnemy); // Update the component state
-      saveEnemy(newEnemy); // Save to the backend
+      saveEnemy(newEnemy);
     } catch (error) {
       console.error("Error fetching monster details:", error);
     }
@@ -93,7 +93,6 @@ const EnemyComponent = () => {
   return (
     <div className="monster-container">
       <div className="generate-enemy">
-        <h2>Generate Enemy</h2>
         <button onClick={createEnemy}>Generate Enemy</button>
       </div>
 
@@ -152,27 +151,30 @@ const EnemyComponent = () => {
           </div>
           <h4>Special Abilities</h4>
           <ul>
-            {enemy.specialAbilities.map((ability, index) => (
-              <li key={index}>
-                <strong>{ability.name}:</strong> {ability.desc}
-              </li>
-            ))}
+            {enemy.specialAbilities &&
+              enemy.specialAbilities.map((ability, index) => (
+                <li key={index}>
+                  <strong>{ability.name}:</strong> {ability.desc}
+                </li>
+              ))}
           </ul>
           <h4>Actions</h4>
           <ul>
-            {enemy.actions.map((action, index) => (
-              <li key={index}>
-                <strong>{action.name}:</strong> {action.desc}
-              </li>
-            ))}
+            {enemy.actions &&
+              enemy.actions.map((action, index) => (
+                <li key={index}>
+                  <strong>{action.name}:</strong> {action.desc}
+                </li>
+              ))}
           </ul>
           <h4>Legendary Actions</h4>
           <ul>
-            {enemy.legendaryActions.map((action, index) => (
-              <li key={index}>
-                <strong>{action.name}:</strong> {action.desc}
-              </li>
-            ))}
+            {enemy.legendaryActions &&
+              enemy.legendaryActions.map((action, index) => (
+                <li key={index}>
+                  <strong>{action.name}:</strong> {action.desc}
+                </li>
+              ))}
           </ul>
         </div>
       )}

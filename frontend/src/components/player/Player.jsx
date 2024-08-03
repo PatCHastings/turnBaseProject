@@ -1,17 +1,17 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { useGame } from "../gameContext/GameContext";
+import { useDispatch, useSelector } from "react-redux";
+import { setPlayer } from "../store/Store.js";
 import "./player.css";
 
 const PlayerComponent = () => {
-  const { setPlayer } = useGame();
+  const dispatch = useDispatch();
+  const player = useSelector((state) => state.player);
   const [classes, setClasses] = useState([]);
-  const [selectedClass, setSelectedClass] = useState(null);
-  const [playerData, setPlayerData] = useState({
-    name: "",
-    health: 100,
-    characterClass: null,
-  });
+  const [selectedClass, setSelectedClass] = useState(
+    player.characterClass || null
+  );
+  const [playerData, setPlayerData] = useState(player);
 
   useEffect(() => {
     const fetchClasses = async () => {
@@ -19,12 +19,7 @@ const PlayerComponent = () => {
         const response = await axios.get(
           "http://localhost:8080/api/classes/fetch"
         );
-        console.log("Classes fetched:", response.data);
-        if (response.data) {
-          setClasses(response.data);
-        } else {
-          console.error("Unexpected response structure:", response.data);
-        }
+        setClasses(response.data);
       } catch (error) {
         console.error("Error fetching classes:", error);
       }
@@ -41,13 +36,10 @@ const PlayerComponent = () => {
         const response = await axios.get(
           `http://localhost:8080/api/classes/${classIndex}`
         );
-        console.log("Class details fetched:", response.data);
-        const newClass = {};
         setSelectedClass(response.data);
         setPlayerData((prevPlayer) => ({
           ...prevPlayer,
           characterClass: response.data,
-          hit_die: response.data,
         }));
       } catch (error) {
         console.error("Error fetching class details:", error);
@@ -71,8 +63,7 @@ const PlayerComponent = () => {
           },
         }
       );
-      console.log("Player saved:", response.data);
-      setPlayer(response.data); // Update the context state
+      dispatch(setPlayer(response.data));
     } catch (error) {
       console.error("Error saving player:", error);
     }
@@ -82,56 +73,67 @@ const PlayerComponent = () => {
     <div className="player-container">
       <h2>Create Player</h2>
       <div className="player-form">
-        <label>
-          Player Name:
-          <input
-            type="text"
-            name="name"
-            value={playerData.name}
-            onChange={handleInputChange}
-          />
-        </label>
-        <label>
-          Select Class:
-          <select name="characterClass" onChange={handleClassChange}>
-            <option value="">Select a class</option>
-            {classes.map((cls) => (
-              <option key={cls.index} value={cls.index}>
-                {cls.name}
-              </option>
-            ))}
-          </select>
-        </label>
+        <div>
+          <label className="player-name">
+            Player Name:
+            <input
+              type="text"
+              name="name"
+              value={playerData.name}
+              onChange={handleInputChange}
+            />
+          </label>
+        </div>
+        <div>
+          <label className="player-class">
+            Select Class:
+            <select
+              name="characterClass"
+              onChange={handleClassChange}
+              value={
+                playerData.characterClass ? playerData.characterClass.index : ""
+              }
+            >
+              <option value="">Select a class</option>
+              {classes.map((cls) => (
+                <option key={cls.index} value={cls.index}>
+                  {cls.name}
+                </option>
+              ))}
+            </select>
+          </label>
+        </div>
         <button onClick={savePlayer}>Save Player</button>
       </div>
-
-      {selectedClass && (
-        <div className="class-info">
-          <h3>Class Info</h3>
-          <p>Name: {selectedClass.name}</p>
-          <p>Hit Die: {selectedClass.hit_die}</p>
-          <h4>Proficiencies</h4>
-          <ul>
-            {selectedClass.proficiencies &&
-              selectedClass.proficiencies.map((proficiency, index) => (
-                <li key={index}>{proficiency.name}</li>
-              ))}
-          </ul>
-          <h4>Saving Throws</h4>
-          <ul>
-            {selectedClass.saving_throws &&
-              selectedClass.saving_throws.map((savingThrow, index) => (
-                <li key={index}>{savingThrow.name}</li>
-              ))}
-          </ul>
+      <div className="stat-block">
+        <div className="player-info">
+          <h3>Player Info</h3>
+          <p>Name: {playerData.name}</p>
+          <p>Class: {selectedClass ? selectedClass.name : "N/A"}</p>
+          <p>Health: {playerData.health}</p>
         </div>
-      )}
 
-      <div className="player-info">
-        <h3>Player Info</h3>
-        <p>Name: {playerData.name}</p>
-        <p>Class: {selectedClass ? selectedClass.name : "N/A"}</p>
-        <p>Health: {playerData.health}</p>
+        {selectedClass && (
+          <div className="class-info">
+            <h3>Class Info</h3>
+            <p>Name: {selectedClass.name}</p>
+            <p>Hit Die: {selectedClass.hit_die}</p>
+            <h4>Proficiencies</h4>
+            <ul>
+              {selectedClass.proficiencies &&
+                selectedClass.proficiencies.map((proficiency, index) => (
+                  <li key={index}>{proficiency.name}</li>
+                ))}
+            </ul>
+            <h4>Saving Throws</h4>
+            <ul>
+              {selectedClass.saving_throws &&
+                selectedClass.saving_throws.map((savingThrow, index) => (
+                  <li key={index}>{savingThrow.name}</li>
+                ))}
+            </ul>
+          </div>
+        )}
       </div>
     </div>
   );

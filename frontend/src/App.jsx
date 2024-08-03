@@ -5,12 +5,13 @@ import PlayerComponent from "./components/player/Player";
 import EnemyComponent from "./components/enemy/Enemy";
 import FightComponent from "./components/fight/Fight.jsx";
 import Footer from "./components/footer/Footer.jsx";
-import { GameProvider } from "./components/gameContext/GameContext.jsx";
+import store from "./components/store/Store.js";
+import { Provider } from "react-redux";
 import "./App.css";
 
 const App = () => {
   return (
-    <GameProvider>
+    <Provider store={store}>
       <Router>
         <div className="navbar">
           <Navbar />
@@ -28,7 +29,7 @@ const App = () => {
           <Footer />
         </div>
       </Router>
-    </GameProvider>
+    </Provider>
   );
 };
 

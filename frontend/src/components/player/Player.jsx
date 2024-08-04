@@ -34,8 +34,9 @@ const PlayerComponent = () => {
     if (classIndex) {
       try {
         const response = await axios.get(
-          `http://localhost:8080/api/classes/${classIndex}`
+          `http://localhost:8080/api/classes/details/${classIndex}`
         );
+        console.log("Class details fetched:", response.data);
         setSelectedClass(response.data);
         setPlayerData((prevPlayer) => ({
           ...prevPlayer,

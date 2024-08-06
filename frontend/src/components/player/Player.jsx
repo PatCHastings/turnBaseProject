@@ -17,6 +17,15 @@ const PlayerComponent = () => {
     }
   }, [dispatch, classes.length]);
 
+  useEffect(() => {
+    // Resets playerData if changing routes to avoid overwriting the player state
+    setPlayerData({
+      name: "",
+      health: null,
+      characterClass: null,
+    });
+  }, []);
+
   const handleClassChange = (e) => {
     const classIndex = e.target.value;
 
@@ -36,9 +45,10 @@ const PlayerComponent = () => {
 
   const savePlayer = async () => {
     try {
+      const playerToSave = { ...playerData, id: null };
       const response = await axios.post(
         "http://localhost:8080/api/players",
-        playerData,
+        playerToSave,
         {
           headers: {
             "Content-Type": "application/json",
@@ -93,9 +103,9 @@ const PlayerComponent = () => {
           <h3>Player Info</h3>
           <p>Name: {playerData.name}</p>
           <p>Class: {selectedClass ? selectedClass.name : "N/A"}</p>
-          <p>Health: {playerData.health}</p>
-          <p>Constitution: {playerData.constitution}</p>
-          <p>Constitution Modifier: {playerData.constitutionModifier}</p>
+          <p>Health: {player.health}</p>
+          <p>Constitution: {player.constitution}</p>
+          <p>Constitution Modifier: {player.constitutionModifier}</p>
         </div>
 
         {selectedClass && (

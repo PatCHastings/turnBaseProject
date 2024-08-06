@@ -18,7 +18,10 @@ const FightComponent = () => {
               <p>Name: {player.name}</p>
               <p>Health: {player.health}</p>
               <p>Class: {selectedClass ? selectedClass.name : "N/A"}</p>
-              <p>Constitution: {player.constitution}</p>
+              <p>
+                Constitution: {player.constitution} +{""}
+                {player.constitutionModifier}
+              </p>
             </div>
           ) : (
             <p>No player selected.</p>

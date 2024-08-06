@@ -1,50 +1,31 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
 import { useDispatch, useSelector } from "react-redux";
-import { setPlayer } from "../store/Store.js";
+import axios from "axios";
+import { setPlayer, fetchClasses, fetchClassDetails } from "../store/Store";
 import "./player.css";
 
 const PlayerComponent = () => {
   const dispatch = useDispatch();
   const player = useSelector((state) => state.player);
-  const [classes, setClasses] = useState([]);
-  const [selectedClass, setSelectedClass] = useState(
-    player.characterClass || null
-  );
+  const classes = useSelector((state) => state.class.classes);
+  const selectedClass = useSelector((state) => state.class.selectedClass);
   const [playerData, setPlayerData] = useState(player);
 
   useEffect(() => {
-    const fetchClasses = async () => {
-      try {
-        const response = await axios.get(
-          "http://localhost:8080/api/classes/fetch"
-        );
-        setClasses(response.data);
-      } catch (error) {
-        console.error("Error fetching classes:", error);
-      }
-    };
+    if (classes.length === 0) {
+      dispatch(fetchClasses());
+    }
+  }, [dispatch, classes.length]);
 
-    fetchClasses();
-  }, []);
-
-  const handleClassChange = async (e) => {
+  const handleClassChange = (e) => {
     const classIndex = e.target.value;
 
     if (classIndex) {
-      try {
-        const response = await axios.get(
-          `http://localhost:8080/api/classes/details/${classIndex}`
-        );
-        console.log("Class details fetched:", response.data);
-        setSelectedClass(response.data);
-        setPlayerData((prevPlayer) => ({
-          ...prevPlayer,
-          characterClass: response.data,
-        }));
-      } catch (error) {
-        console.error("Error fetching class details:", error);
-      }
+      dispatch(fetchClassDetails(classIndex));
+      setPlayerData((prevPlayer) => ({
+        ...prevPlayer,
+        characterClass: classes.find((cls) => cls.index === classIndex),
+      }));
     }
   };
 
@@ -64,6 +45,7 @@ const PlayerComponent = () => {
           },
         }
       );
+      console.log("Player saved:", response.data);
       dispatch(setPlayer(response.data));
     } catch (error) {
       console.error("Error saving player:", error);
@@ -112,6 +94,8 @@ const PlayerComponent = () => {
           <p>Name: {playerData.name}</p>
           <p>Class: {selectedClass ? selectedClass.name : "N/A"}</p>
           <p>Health: {playerData.health}</p>
+          <p>Constitution: {playerData.constitution}</p>
+          <p>Constitution Modifier: {playerData.constitutionModifier}</p>
         </div>
 
         {selectedClass && (

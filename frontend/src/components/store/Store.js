@@ -1,57 +1,92 @@
-import { createStore, combineReducers } from 'redux';
+import { configureStore, createSlice } from '@reduxjs/toolkit';
+import { thunk } from 'redux-thunk';
+import axios from 'axios';
 
 // Initial state
 const initialPlayerState = {
   name: '',
-  health: 100,
+  health: null,
   characterClass: null,
 };
 
 const initialEnemyState = {
   name: '',
   health: null,
-  characterClass: null,
 };
 
-// Action Types
-const SET_PLAYER = 'SET_PLAYER';
-const SET_ENEMY = 'SET_ENEMY';
+const initialClassState = {
+  classes: [],
+  selectedClass: null,
+};
 
-// Action Creators
-export const setPlayer = (player) => ({
-  type: SET_PLAYER,
-  payload: player,
-});
-
-export const setEnemy = (enemy) => ({
-  type: SET_ENEMY,
-  payload: enemy,
-});
-
-// Reducers
-const playerReducer = (state = initialPlayerState, action) => {
-  switch (action.type) {
-    case SET_PLAYER:
+// Player slice
+const playerSlice = createSlice({
+  name: 'player',
+  initialState: initialPlayerState,
+  reducers: {
+    setPlayer(state, action) {
       return { ...state, ...action.payload };
-    default:
-      return state;
+    },
+  },
+});
+
+// Enemy slice
+const enemySlice = createSlice({
+  name: 'enemy',
+  initialState: initialEnemyState,
+  reducers: {
+    setEnemy(state, action) {
+      return { ...state, ...action.payload };
+    },
+  },
+});
+
+// Class slice
+const classSlice = createSlice({
+  name: 'class',
+  initialState: initialClassState,
+  reducers: {
+    setClasses(state, action) {
+      state.classes = action.payload;
+    },
+    setSelectedClass(state, action) {
+      state.selectedClass = action.payload;
+    },
+  },
+});
+
+// Export actions
+export const { setPlayer } = playerSlice.actions;
+export const { setEnemy } = enemySlice.actions;
+export const { setClasses, setSelectedClass } = classSlice.actions;
+
+// Thunk actions
+export const fetchClasses = () => async (dispatch) => {
+  try {
+    const response = await axios.get('http://localhost:8080/api/classes/fetch');
+    dispatch(setClasses(response.data));
+  } catch (error) {
+    console.error('Error fetching classes:', error);
   }
 };
 
-const enemyReducer = (state = initialEnemyState, action) => {
-  switch (action.type) {
-    case SET_ENEMY:
-      return { ...state, ...action.payload };
-    default:
-      return state;
+export const fetchClassDetails = (classIndex) => async (dispatch) => {
+  try {
+    const response = await axios.get(`http://localhost:8080/api/classes/${classIndex}`);
+    dispatch(setSelectedClass(response.data));
+  } catch (error) {
+    console.error('Error fetching class details:', error);
   }
 };
 
-const rootReducer = combineReducers({
-  player: playerReducer,
-  enemy: enemyReducer,
+// Configure store
+const store = configureStore({
+  reducer: {
+    player: playerSlice.reducer,
+    enemy: enemySlice.reducer,
+    class: classSlice.reducer,
+  },
+  middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(thunk),
 });
-
-const store = createStore(rootReducer);
 
 export default store;

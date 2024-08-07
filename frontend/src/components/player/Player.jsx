@@ -18,6 +18,10 @@ const PlayerComponent = () => {
   }, [dispatch, classes.length]);
 
   useEffect(() => {
+    console.log("Selected Class:", selectedClass);
+  }, [selectedClass]);
+
+  useEffect(() => {
     // Resets playerData if changing routes to avoid overwriting the player state
     setPlayerData({
       name: "",
@@ -113,6 +117,23 @@ const PlayerComponent = () => {
             <h3>Class Info</h3>
             <p>Name: {selectedClass.name}</p>
             <p>Hit Die: {selectedClass.hit_die}</p>
+            <h4>Equipment</h4>
+            {console.log(
+              "Selected Class Starting Equipment:",
+              selectedClass.starting_equipment
+            )}
+            <ul>
+              {selectedClass.startingEquipment &&
+              selectedClass.startingEquipment.length > 0 ? (
+                selectedClass.startingEquipment.map((item, index) => (
+                  <li key={index}>
+                    {item.equipment.name} (Quantity: {item.quantity})
+                  </li>
+                ))
+              ) : (
+                <li>None</li>
+              )}
+            </ul>
             <h4>Proficiencies</h4>
             <ul>
               {selectedClass.proficiencies &&

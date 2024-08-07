@@ -73,6 +73,7 @@ export const fetchClasses = () => async (dispatch) => {
 export const fetchClassDetails = (classIndex) => async (dispatch) => {
   try {
     const response = await axios.get(`http://localhost:8080/api/classes/${classIndex}`);
+    console.log('Class Details Response:', response.data);
     dispatch(setSelectedClass(response.data));
   } catch (error) {
     console.error('Error fetching class details:', error);

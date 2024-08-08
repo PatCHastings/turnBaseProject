@@ -35,8 +35,8 @@ const FightComponent = () => {
           <h3>Enemy</h3>
           {enemy ? (
             <div>
-              <p>Name: {enemy.name}</p>
-              <p>Health: {enemy.health}</p>
+              <p>Name: {enemy.enemyName}</p>
+              <p>Health: {enemy.enemyHealth}</p>
               <p>Type: {enemy.type}</p>
             </div>
           ) : (

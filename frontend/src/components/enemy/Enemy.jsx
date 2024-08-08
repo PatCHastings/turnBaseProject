@@ -9,23 +9,25 @@ const EnemyComponent = () => {
   const enemy = useSelector((state) => state.enemy);
   const [monsters, setMonsters] = useState([]);
 
-  useEffect(() => {
-    const fetchMonsters = async () => {
-      try {
-        const response = await axios.get(
-          "http://localhost:8080/api/external/monsters"
-        );
-        console.log("Monsters fetched:", response.data);
-        if (response.data && response.data.results) {
-          setMonsters(response.data.results);
-        } else {
-          console.error("Unexpected response structure:", response.data);
-        }
-      } catch (error) {
-        console.error("Error fetching monsters:", error);
+  const fetchMonsters = async () => {
+    try {
+      const response = await axios.get(
+        "http://localhost:8080/api/external/monsters"
+      );
+      console.log("Monsters fetched:", response.data);
+      if (Array.isArray(response.data)) {
+        setMonsters(response.data);
+      } else {
+        console.error("Unexpected response structure:", response.data);
+        setError("Unexpected response structure");
       }
-    };
+    } catch (error) {
+      console.error("Error fetching monsters:", error);
+      setError("Error fetching monsters");
+    }
+  };
 
+  useEffect(() => {
     fetchMonsters();
   }, []);
 
@@ -61,29 +63,22 @@ const EnemyComponent = () => {
       const newEnemy = {
         enemyName: response.data.name,
         enemyHealth: response.data.hit_points,
+        enemyType: response.data.type,
         size: response.data.size,
-        type: response.data.type,
         alignment: response.data.alignment,
         armorClass: Array.isArray(response.data.armor_class)
-          ? response.data.armor_class
-              .map((ac) => `${ac.type}: ${ac.value}`)
-              .join(", ")
+          ? response.data.armor_class.map((ac) => ac.value).join(", ")
           : response.data.armor_class,
-        speed: response.data.speed,
+        speed: response.data.speed.walk, // Example assuming speed has 'walk' property
         strength: response.data.strength,
         dexterity: response.data.dexterity,
         constitution: response.data.constitution,
         intelligence: response.data.intelligence,
         wisdom: response.data.wisdom,
         charisma: response.data.charisma,
-        proficiencies: response.data.proficiencies,
-        senses: response.data.senses,
-        languages: response.data.languages,
         challengeRating: response.data.challenge_rating,
-        specialAbilities: response.data.special_abilities,
-        actions: response.data.actions,
-        legendaryActions: response.data.legendary_actions,
       };
+      console.log("New enemy payload:", newEnemy); // Log the payload
       saveEnemy(newEnemy);
     } catch (error) {
       console.error("Error fetching monster details:", error);

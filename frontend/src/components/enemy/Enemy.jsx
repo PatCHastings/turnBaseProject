@@ -76,9 +76,7 @@ const EnemyComponent = () => {
         enemyType: response.data.type,
         size: response.data.size,
         alignment: response.data.alignment,
-        armorClass: Array.isArray(response.data.armor_class)
-          ? response.data.armor_class.map((ac) => ac.value).join(", ")
-          : response.data.armor_class,
+        armorClass: response.data.armor_class,
         speed: speed,
         strength: response.data.strength,
         dexterity: response.data.dexterity,
@@ -88,6 +86,7 @@ const EnemyComponent = () => {
         charisma: response.data.charisma,
         challengeRating: response.data.challenge_rating,
         specialAbilities: response.data.special_abilities,
+        actions: response.data.actions,
       };
       console.log("New enemy payload:", newEnemy); // Log the payload
       saveEnemy(newEnemy);
@@ -132,7 +131,13 @@ const EnemyComponent = () => {
               <strong>Alignment:</strong> {enemy.alignment}
             </p>
             <p>
-              <strong>Armor Class:</strong> {enemy.armorClass}
+              <strong>Armor Class:</strong>
+              {enemy.armorClass &&
+                enemy.armorClass.map((ac, index) => (
+                  <ul key={index}>
+                    {ac.type}: {ac.value}
+                  </ul>
+                ))}
             </p>
           </div>
           <div className="monster-stats">
@@ -173,6 +178,15 @@ const EnemyComponent = () => {
               enemy.actions.map((action, index) => (
                 <li key={index}>
                   <strong>{action.name}:</strong> {action.desc}
+                  {action.damage && (
+                    <ul>
+                      {action.damage.map((dmg, dmgIndex) => (
+                        <li key={dmgIndex}>
+                          <strong>{dmg.damageType}:</strong> {dmg.damageDice}
+                        </li>
+                      ))}
+                    </ul>
+                  )}
                 </li>
               ))}
           </ul>

@@ -60,6 +60,16 @@ const EnemyComponent = () => {
       const monsterUrl = `http://localhost:8080/api/external/monsters/${randomMonster.index}`;
       const response = await axios.get(monsterUrl);
       console.log("Monster details fetched:", response.data);
+
+      let speed;
+      if (typeof response.data.speed === "object") {
+        speed = Object.entries(response.data.speed)
+          .map(([type, value]) => `${type}: ${value}`)
+          .join(", ");
+      } else {
+        speed = response.data.speed;
+      }
+
       const newEnemy = {
         enemyName: response.data.name,
         enemyHealth: response.data.hit_points,
@@ -69,7 +79,7 @@ const EnemyComponent = () => {
         armorClass: Array.isArray(response.data.armor_class)
           ? response.data.armor_class.map((ac) => ac.value).join(", ")
           : response.data.armor_class,
-        speed: response.data.speed.walk, // Example assuming speed has 'walk' property
+        speed: speed,
         strength: response.data.strength,
         dexterity: response.data.dexterity,
         constitution: response.data.constitution,
@@ -77,6 +87,7 @@ const EnemyComponent = () => {
         wisdom: response.data.wisdom,
         charisma: response.data.charisma,
         challengeRating: response.data.challenge_rating,
+        specialAbilities: response.data.special_abilities,
       };
       console.log("New enemy payload:", newEnemy); // Log the payload
       saveEnemy(newEnemy);
@@ -112,7 +123,10 @@ const EnemyComponent = () => {
               <strong>Size:</strong> {enemy.size}
             </p>
             <p>
-              <strong>Type:</strong> {enemy.type}
+              <strong>Speed:</strong> {enemy.speed}
+            </p>
+            <p>
+              <strong>Type:</strong> {enemy.enemyType}
             </p>
             <p>
               <strong>Alignment:</strong> {enemy.alignment}

@@ -9,25 +9,25 @@ const EnemyComponent = () => {
   const enemy = useSelector((state) => state.enemy);
   const [monsters, setMonsters] = useState([]);
 
-  const fetchMonsters = async () => {
-    try {
-      const response = await axios.get(
-        "http://localhost:8080/api/external/monsters"
-      );
-      console.log("Monsters fetched:", response.data);
-      if (Array.isArray(response.data)) {
-        setMonsters(response.data);
-      } else {
-        console.error("Unexpected response structure:", response.data);
-        setError("Unexpected response structure");
-      }
-    } catch (error) {
-      console.error("Error fetching monsters:", error);
-      setError("Error fetching monsters");
-    }
-  };
-
   useEffect(() => {
+    const fetchMonsters = async () => {
+      try {
+        const response = await axios.get(
+          "http://localhost:8080/api/external/monsters"
+        );
+        console.log("Monsters fetched:", response.data);
+        if (Array.isArray(response.data)) {
+          setMonsters(response.data);
+        } else {
+          console.error("Unexpected response structure:", response.data);
+          setError("Unexpected response structure");
+        }
+      } catch (error) {
+        console.error("Error fetching monsters:", error);
+        setError("Error fetching monsters");
+      }
+    };
+
     fetchMonsters();
   }, []);
 
@@ -130,15 +130,13 @@ const EnemyComponent = () => {
             <p>
               <strong>Alignment:</strong> {enemy.alignment}
             </p>
-            <p>
-              <strong>Armor Class:</strong>
-              {enemy.armorClass &&
-                enemy.armorClass.map((ac, index) => (
-                  <ul key={index}>
-                    {ac.type}: {ac.value}
-                  </ul>
-                ))}
-            </p>
+            <strong>Armor Class:</strong>
+            {enemy.armorClass &&
+              enemy.armorClass.map((ac, index) => (
+                <p key={index}>
+                  {ac.type}: {ac.value}
+                </p>
+              ))}
           </div>
           <div className="monster-stats">
             <p>

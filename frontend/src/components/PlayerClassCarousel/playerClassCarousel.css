@@ -1,0 +1,9 @@
+.carousel-container {
+  margin-top: 5px;
+  background-image: url("../../../backgrounds/ruins.png");
+}
+
+.selected {
+  filter: drop-shadow(8px); /* Example border to indicate selection */
+  transform: scale(1.1); /* Slightly enlarge the selected image */
+}

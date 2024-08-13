@@ -1,12 +1,12 @@
 @font-face {
   font-family: "BetterPixels";
-  src: url("/public/assets/fonts/BetterPixels.ttf") format("truetype");
+  src: url("/assets/fonts/BetterPixels.ttf") format("truetype");
   font-weight: normal;
   font-style: normal;
 }
 @font-face {
   font-family: "TimesNewPixel";
-  src: url("/public/assets/fonts/TimesNewPixel.ttf") format("truetype");
+  src: url("/assets/fonts/TimesNewPixel.ttf") format("truetype");
   font-weight: normal;
   font-style: normal;
 }

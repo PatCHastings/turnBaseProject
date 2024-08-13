@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import axios from "axios";
 import { setPlayer, fetchClasses, fetchClassDetails } from "../store/Store";
 import "./player.css";
+import PlayerClassCarousel from "../PlayerClassCarousel/PlayerClassCarousel";
 
 const PlayerComponent = () => {
   const dispatch = useDispatch();
@@ -30,9 +31,7 @@ const PlayerComponent = () => {
     });
   }, []);
 
-  const handleClassChange = (e) => {
-    const classIndex = e.target.value;
-
+  const handleClassChange = (classIndex) => {
     if (classIndex) {
       dispatch(fetchClassDetails(classIndex));
       setPlayerData((prevPlayer) => ({
@@ -69,6 +68,13 @@ const PlayerComponent = () => {
   return (
     <div className="player-container">
       <h2>Create Player</h2>
+      <PlayerClassCarousel
+        onClassChange={handleClassChange}
+        selectedClass={
+          playerData.characterClass ? playerData.characterClass.index : ""
+        }
+      />
+
       <div className="player-form">
         <div>
           <label className="player-name">
@@ -81,25 +87,7 @@ const PlayerComponent = () => {
             />
           </label>
         </div>
-        <div>
-          <label className="player-class">
-            Select Class:
-            <select
-              name="characterClass"
-              onChange={handleClassChange}
-              value={
-                playerData.characterClass ? playerData.characterClass.index : ""
-              }
-            >
-              <option value="">Select a class</option>
-              {classes.map((cls) => (
-                <option key={cls.index} value={cls.index}>
-                  {cls.name}
-                </option>
-              ))}
-            </select>
-          </label>
-        </div>
+        <div></div>
         <button onClick={savePlayer}>Save Player</button>
       </div>
       <div className="stat-block">

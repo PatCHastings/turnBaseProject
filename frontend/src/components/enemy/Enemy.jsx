@@ -3,6 +3,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useDispatch, useSelector } from "react-redux";
 import { setEnemy } from "../store/Store";
+import ParchmentBox from "../parchmentBox/ParchmentBox";
 
 const EnemyComponent = () => {
   const dispatch = useDispatch();
@@ -102,101 +103,103 @@ const EnemyComponent = () => {
       </div>
 
       {enemy && (
-        <div className="stat-block">
-          <h3>Enemy Info</h3>
-          {enemy.imageUrl && (
-            <img
-              src={enemy.imageUrl}
-              alt={enemy.enemyName}
-              className="monster-image"
-            />
-          )}
-          <div className="monster-info">
-            <p>
-              <strong>Name:</strong> {enemy.enemyName}
-            </p>
-            <p>
-              <strong>Health:</strong> {enemy.enemyHealth}
-            </p>
-            <p>
-              <strong>Size:</strong> {enemy.size}
-            </p>
-            <p>
-              <strong>Speed:</strong> {enemy.speed}
-            </p>
-            <p>
-              <strong>Type:</strong> {enemy.enemyType}
-            </p>
-            <p>
-              <strong>Alignment:</strong> {enemy.alignment}
-            </p>
-            <strong>Armor Class:</strong>
-            {enemy.armorClass &&
-              enemy.armorClass.map((ac, index) => (
-                <p key={index}>
-                  {ac.type}: {ac.value}
-                </p>
-              ))}
-          </div>
-          <div className="monster-stats">
-            <p>
-              <strong>Strength:</strong> {enemy.strength}
-            </p>
-            <p>
-              <strong>Dexterity:</strong> {enemy.dexterity}
-            </p>
-            <p>
-              <strong>Constitution:</strong> {enemy.constitution}
-            </p>
-            <p>
-              <strong>Intelligence:</strong> {enemy.intelligence}
-            </p>
-            <p>
-              <strong>Wisdom:</strong> {enemy.wisdom}
-            </p>
-            <p>
-              <strong>Charisma:</strong> {enemy.charisma}
-            </p>
-            <p>
-              <strong>Challenge Rating:</strong> {enemy.challengeRating}
-            </p>
-          </div>
-          <h4>Special Abilities</h4>
-          <ul>
-            {enemy.specialAbilities &&
-              enemy.specialAbilities.map((ability, index) => (
-                <li key={index}>
-                  <strong>{ability.name}:</strong> {ability.desc}
-                </li>
-              ))}
-          </ul>
-          <h4>Actions</h4>
-          <ul>
-            {enemy.actions &&
-              enemy.actions.map((action, index) => (
-                <li key={index}>
-                  <strong>{action.name}:</strong> {action.desc}
-                  {action.damage && (
-                    <ul>
-                      {action.damage.map((dmg, dmgIndex) => (
-                        <li key={dmgIndex}>
-                          <strong>{dmg.damageType}:</strong> {dmg.damageDice}
-                        </li>
-                      ))}
-                    </ul>
-                  )}
-                </li>
-              ))}
-          </ul>
-          <h4>Legendary Actions</h4>
-          <ul>
-            {enemy.legendaryActions &&
-              enemy.legendaryActions.map((action, index) => (
-                <li key={index}>
-                  <strong>{action.name}:</strong> {action.desc}
-                </li>
-              ))}
-          </ul>
+        <div className="">
+          <ParchmentBox>
+            <h3>Enemy Info</h3>
+            {enemy.imageUrl && (
+              <img
+                src={enemy.imageUrl}
+                alt={enemy.enemyName}
+                className="monster-image"
+              />
+            )}
+            <div className="monster-info">
+              <p>
+                <strong>Name:</strong> {enemy.enemyName}
+              </p>
+              <p>
+                <strong>Health:</strong> {enemy.enemyHealth}
+              </p>
+              <p>
+                <strong>Size:</strong> {enemy.size}
+              </p>
+              <p>
+                <strong>Speed:</strong> {enemy.speed}
+              </p>
+              <p>
+                <strong>Type:</strong> {enemy.enemyType}
+              </p>
+              <p>
+                <strong>Alignment:</strong> {enemy.alignment}
+              </p>
+              <strong>Armor Class:</strong>
+              {enemy.armorClass &&
+                enemy.armorClass.map((ac, index) => (
+                  <p key={index}>
+                    {ac.type}: {ac.value}
+                  </p>
+                ))}
+            </div>
+            <div className="monster-stats">
+              <p>
+                <strong>Strength:</strong> {enemy.strength}
+              </p>
+              <p>
+                <strong>Dexterity:</strong> {enemy.dexterity}
+              </p>
+              <p>
+                <strong>Constitution:</strong> {enemy.constitution}
+              </p>
+              <p>
+                <strong>Intelligence:</strong> {enemy.intelligence}
+              </p>
+              <p>
+                <strong>Wisdom:</strong> {enemy.wisdom}
+              </p>
+              <p>
+                <strong>Charisma:</strong> {enemy.charisma}
+              </p>
+              <p>
+                <strong>Challenge Rating:</strong> {enemy.challengeRating}
+              </p>
+            </div>
+            <h4>Special Abilities</h4>
+            <ul>
+              {enemy.specialAbilities &&
+                enemy.specialAbilities.map((ability, index) => (
+                  <li key={index}>
+                    <strong>{ability.name}:</strong> {ability.desc}
+                  </li>
+                ))}
+            </ul>
+            <h4>Actions</h4>
+            <ul>
+              {enemy.actions &&
+                enemy.actions.map((action, index) => (
+                  <li key={index}>
+                    <strong>{action.name}:</strong> {action.desc}
+                    {action.damage && (
+                      <ul>
+                        {action.damage.map((dmg, dmgIndex) => (
+                          <li key={dmgIndex}>
+                            <strong>{dmg.damageType}:</strong> {dmg.damageDice}
+                          </li>
+                        ))}
+                      </ul>
+                    )}
+                  </li>
+                ))}
+            </ul>
+            <h4>Legendary Actions</h4>
+            <ul>
+              {enemy.legendaryActions &&
+                enemy.legendaryActions.map((action, index) => (
+                  <li key={index}>
+                    <strong>{action.name}:</strong> {action.desc}
+                  </li>
+                ))}
+            </ul>
+          </ParchmentBox>
         </div>
       )}
     </div>

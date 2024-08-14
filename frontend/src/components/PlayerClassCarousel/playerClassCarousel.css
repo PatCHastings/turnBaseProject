@@ -1,9 +1,31 @@
 .carousel-container {
-  margin-top: 5px;
   background-image: url("../../../backgrounds/ruins.png");
 }
 
+.characterPic {
+}
+
+.characterPic-className {
+  filter: drop-shadow(8px 8px 8px);
+  text-align: center;
+  cursor: pointer;
+}
+.characterPic-className:hover {
+  transform: scale(1.1);
+  transition-duration: 1s;
+
+  h3 {
+    color: #ff7c02;
+    text-shadow: 2px 2px 2px #ffffff;
+    transition-duration: 1s;
+  }
+}
+
 .selected {
-  filter: drop-shadow(8px); /* Example border to indicate selection */
   transform: scale(1.1); /* Slightly enlarge the selected image */
+  h3 {
+    color: #ff7c02;
+    text-shadow: 2px 2px 2px #ffffff;
+    transition-duration: 1s;
+  }
 }

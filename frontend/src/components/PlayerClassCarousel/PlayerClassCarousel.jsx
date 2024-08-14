@@ -36,14 +36,14 @@ const PlayerClassCarousel = ({ onClassChange, selectedClass }) => {
   return (
     <div className="carousel-container">
       <Swiper
-        spaceBetween={10}
+        spaceBetween={0}
         slidesPerView={"auto"}
         loop={true}
         centeredSlides={true}
-        autoplay={{ delay: 2500, disableOnInteraction: false }}
+        autoplay={{ delay: 1000, disableOnInteraction: false }}
       >
         {playerClasses.map((playerClass, index) => (
-          <SwiperSlide key={index}>
+          <SwiperSlide className="characterPic-className" key={index}>
             <img
               src={playerClass.image}
               alt={playerClass.name}

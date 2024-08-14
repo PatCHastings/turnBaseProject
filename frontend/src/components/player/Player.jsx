@@ -4,6 +4,7 @@ import axios from "axios";
 import { setPlayer, fetchClasses, fetchClassDetails } from "../store/Store";
 import "./player.css";
 import PlayerClassCarousel from "../PlayerClassCarousel/PlayerClassCarousel";
+import ParchmentBox from "../parchmentBox/ParchmentBox";
 
 const PlayerComponent = () => {
   const dispatch = useDispatch();
@@ -90,54 +91,56 @@ const PlayerComponent = () => {
         <div></div>
         <button onClick={savePlayer}>Save Player</button>
       </div>
-      <div className="stat-block">
-        <div className="player-info">
-          <h3>Player Info</h3>
-          <p>Name: {playerData.name}</p>
-          <p>Class: {selectedClass ? selectedClass.name : "N/A"}</p>
-          <p>Health: {player.health}</p>
-          <p>Constitution: {player.constitution}</p>
-          <p>Constitution Modifier: {player.constitutionModifier}</p>
-        </div>
-
-        {selectedClass && (
-          <div className="class-info">
-            <h3>Class Info</h3>
-            <p>Name: {selectedClass.name}</p>
-            <p>Hit Die: {selectedClass.hit_die}</p>
-            <h4>Equipment</h4>
-            {console.log(
-              "Selected Class Starting Equipment:",
-              selectedClass.starting_equipment
-            )}
-            <ul>
-              {selectedClass.startingEquipment &&
-              selectedClass.startingEquipment.length > 0 ? (
-                selectedClass.startingEquipment.map((item, index) => (
-                  <li key={index}>
-                    {item.equipment.name} (Quantity: {item.quantity})
-                  </li>
-                ))
-              ) : (
-                <li>None</li>
-              )}
-            </ul>
-            <h4>Proficiencies</h4>
-            <ul>
-              {selectedClass.proficiencies &&
-                selectedClass.proficiencies.map((proficiency, index) => (
-                  <li key={index}>{proficiency.name}</li>
-                ))}
-            </ul>
-            <h4>Saving Throws</h4>
-            <ul>
-              {selectedClass.saving_throws &&
-                selectedClass.saving_throws.map((savingThrow, index) => (
-                  <li key={index}>{savingThrow.name}</li>
-                ))}
-            </ul>
+      <div className="">
+        <ParchmentBox>
+          <div className="player-info">
+            <h3>Player Info</h3>
+            <p>Name: {playerData.name}</p>
+            <p>Class: {selectedClass ? selectedClass.name : "N/A"}</p>
+            <p>Health: {player.health}</p>
+            <p>Constitution: {player.constitution}</p>
+            <p>Constitution Modifier: {player.constitutionModifier}</p>
           </div>
-        )}
+
+          {selectedClass && (
+            <div className="class-info">
+              <h3>Class Info</h3>
+              <p>Name: {selectedClass.name}</p>
+              <p>Hit Die: {selectedClass.hit_die}</p>
+              <h4>Equipment</h4>
+              {console.log(
+                "Selected Class Starting Equipment:",
+                selectedClass.starting_equipment
+              )}
+              <ul>
+                {selectedClass.startingEquipment &&
+                selectedClass.startingEquipment.length > 0 ? (
+                  selectedClass.startingEquipment.map((item, index) => (
+                    <li key={index}>
+                      {item.equipment.name} (Quantity: {item.quantity})
+                    </li>
+                  ))
+                ) : (
+                  <li>None</li>
+                )}
+              </ul>
+              <h4>Proficiencies</h4>
+              <ul>
+                {selectedClass.proficiencies &&
+                  selectedClass.proficiencies.map((proficiency, index) => (
+                    <li key={index}>{proficiency.name}</li>
+                  ))}
+              </ul>
+              <h4>Saving Throws</h4>
+              <ul>
+                {selectedClass.saving_throws &&
+                  selectedClass.saving_throws.map((savingThrow, index) => (
+                    <li key={index}>{savingThrow.name}</li>
+                  ))}
+              </ul>
+            </div>
+          )}
+        </ParchmentBox>
       </div>
     </div>
   );

@@ -1,0 +1,18 @@
+.parchment-box {
+  background-image: url("/assets/uiBackgrounds/parchment.png");
+  background-size: cover;
+  background-repeat: no-repeat;
+  padding: 20px;
+  border: 2px solid #c4a484;
+  border-radius: 10px;
+  color: #4b2c20; /* Dark brown color for text */
+  font-family: "TimesNewPixel", serif; /* Example custom font */
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.25);
+  max-width: 100%;
+  text-align: left;
+  margin: 0 auto;
+  width: 400px;
+  height: 400px;
+  margin: auto;
+  overflow: scroll;
+}

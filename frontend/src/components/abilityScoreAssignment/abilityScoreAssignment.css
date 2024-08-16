@@ -1,0 +1,25 @@
+.ability-slot {
+  cursor: pointer;
+  padding: 8px;
+  border: 1px solid #4b2c20;
+  margin: 5px 0;
+}
+
+.selected-ability {
+  background-color: #ffa600; /* Highlight color */
+  font-weight: bold;
+}
+
+.generated-scores button {
+  margin: 3px;
+  padding: 8px 12px;
+  background-color: #4b2c20;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.generated-scores button:hover {
+  background-color: #0056b3;
+}

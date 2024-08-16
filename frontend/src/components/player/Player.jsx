@@ -14,10 +14,13 @@ const PlayerComponent = () => {
   const selectedClass = useSelector((state) => state.class.selectedClass);
   const [playerData, setPlayerData] = useState(player);
   const [generatedScores, setGeneratedScores] = useState([]);
+  const [isReadyToSave, setIsReadyToSave] = useState(false);
+  const [isScoreGenerated, setIsScoreGenerated] = useState(false);
 
   const [abilities, setAbilities] = useState([
     { name: "Strength", assignedScore: null },
     { name: "Dexterity", assignedScore: null },
+    { name: "Constitution", assignedScore: null },
     { name: "Intelligence", assignedScore: null },
     { name: "Wisdom", assignedScore: null },
     { name: "Charisma", assignedScore: null },
@@ -64,13 +67,25 @@ const PlayerComponent = () => {
       );
       console.log("Generated scores:", response.data);
       setGeneratedScores(response.data);
+      setIsScoreGenerated(true);
     } catch (error) {
       console.error("Error generating scores:", error);
     }
   };
 
-  const onScoreAssign = (updatedAbilities) => {
+  const onScoreAssign = (updatedAbilities, updatedScores) => {
     setAbilities(updatedAbilities);
+    setGeneratedScores(updatedScores);
+
+    // Check if all abilities have been assigned and set isReadyToSave accordingly
+    const allAssigned = updatedAbilities.every(
+      (ability) => ability.assignedScore !== null
+    );
+    if (allAssigned) {
+      setIsReadyToSave(true);
+    } else {
+      setIsReadyToSave(false);
+    }
   };
 
   const saveAbilityScores = async (playerId, abilityScores) => {
@@ -89,6 +104,8 @@ const PlayerComponent = () => {
     const abilityScores = {
       strength: abilities.find((a) => a.name === "Strength").assignedScore,
       dexterity: abilities.find((a) => a.name === "Dexterity").assignedScore,
+      constitution: abilities.find((a) => a.name === "Constitution")
+        .assignedScore,
       intelligence: abilities.find((a) => a.name === "Intelligence")
         .assignedScore,
       wisdom: abilities.find((a) => a.name === "Wisdom").assignedScore,
@@ -117,6 +134,11 @@ const PlayerComponent = () => {
       console.log("Player saved:", response.data);
       dispatch(setPlayer(response.data));
       setPlayerData(response.data);
+
+      // After saving the player, check if all required fields are filled and enable the save button
+      if (playerData.name && playerData.characterClass && isReadyToSave) {
+        setIsReadyToSave(true);
+      }
     } catch (error) {
       console.error("Error saving player:", error);
     }
@@ -145,7 +167,10 @@ const PlayerComponent = () => {
           </label>
         </div>
         <div></div>
-        <button onClick={savePlayer}>Save Player</button>
+        {/* Save Player Button will only be enabled if all fields are valid */}
+        <button onClick={savePlayer} disabled={!isReadyToSave}>
+          Save Player
+        </button>
       </div>
       <div className="">
         <ParchmentBox>
@@ -196,17 +221,19 @@ const PlayerComponent = () => {
               </ul>
             </div>
           )}
+          <div className="generate-ability-scores">
+            {!isScoreGenerated && (
+              <button onClick={generateScores}>Generate Ability Scores</button>
+            )}
+            <AbilityScoreAssignment
+              generatedScores={generatedScores}
+              abilities={abilities}
+              onScoreAssign={onScoreAssign}
+            />
+            {/* Finalize button to submit the ability scores */}
+            <button onClick={finalizeScores}>Finalize Scores</button>
+          </div>
         </ParchmentBox>
-        <div className="generate-ability-scores">
-          <button onClick={generateScores}>Generate Ability Scores</button>
-          <AbilityScoreAssignment
-            generatedScores={generatedScores}
-            abilities={abilities}
-            onScoreAssign={onScoreAssign}
-          />
-          {/* Finalize button to submit the ability scores */}
-          <button onClick={finalizeScores}>Finalize Scores</button>
-        </div>
       </div>
     </div>
   );

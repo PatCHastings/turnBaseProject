@@ -9,23 +9,26 @@
   filter: drop-shadow(8px 8px 8px);
   text-align: center;
   cursor: pointer;
+  transition: transform 1s ease-out, filter 1s ease-out;
 }
-.characterPic-className:hover {
+.characterPic-className:hover,
+.characterPic-className img.selected {
   transform: scale(1.1);
   transition-duration: 1s;
-
-  h3 {
-    color: #ff7c02;
-    text-shadow: 2px 2px 2px #ffffff;
-    transition-duration: 1s;
-  }
 }
 
-.selected {
-  transform: scale(1.1); /* Slightly enlarge the selected image */
-  h3 {
-    color: #ff7c02;
-    text-shadow: 2px 2px 2px #ffffff;
-    transition-duration: 1s;
-  }
+.characterPic-className h3 {
+  transition: color 1s ease-out, text-shadow 1s ease-out;
+}
+
+.characterPic-className:hover h3,
+.characterPic-className img.selected + h3 {
+  color: #ffa602;
+  text-shadow: 2px 2px 2px #813918;
+  transition-duration: 1s;
+}
+
+.selected,
+.selected img.selected {
+  transform: scale(1.1); /* Slightly enlarge */
 }

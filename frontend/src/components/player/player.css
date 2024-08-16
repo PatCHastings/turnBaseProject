@@ -23,3 +23,9 @@
   margin: auto;
   overflow: scroll;
 }
+
+.generate-ability-scores {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}

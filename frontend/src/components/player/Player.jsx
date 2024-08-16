@@ -5,6 +5,7 @@ import { setPlayer, fetchClasses, fetchClassDetails } from "../store/Store";
 import "./player.css";
 import PlayerClassCarousel from "../PlayerClassCarousel/PlayerClassCarousel";
 import ParchmentBox from "../parchmentBox/ParchmentBox";
+import AbilityScoreAssignment from "../abilityScoreAssignment/AbilityScoreAssignment";
 
 const PlayerComponent = () => {
   const dispatch = useDispatch();
@@ -12,6 +13,15 @@ const PlayerComponent = () => {
   const classes = useSelector((state) => state.class.classes);
   const selectedClass = useSelector((state) => state.class.selectedClass);
   const [playerData, setPlayerData] = useState(player);
+  const [generatedScores, setGeneratedScores] = useState([]);
+
+  const [abilities, setAbilities] = useState([
+    { name: "Strength", assignedScore: null },
+    { name: "Dexterity", assignedScore: null },
+    { name: "Intelligence", assignedScore: null },
+    { name: "Wisdom", assignedScore: null },
+    { name: "Charisma", assignedScore: null },
+  ]);
 
   useEffect(() => {
     if (classes.length === 0) {
@@ -47,6 +57,51 @@ const PlayerComponent = () => {
     setPlayerData((prevPlayer) => ({ ...prevPlayer, [name]: value }));
   };
 
+  const generateScores = async () => {
+    try {
+      const response = await axios.get(
+        "http://localhost:8080/api/players/generate"
+      );
+      console.log("Generated scores:", response.data);
+      setGeneratedScores(response.data);
+    } catch (error) {
+      console.error("Error generating scores:", error);
+    }
+  };
+
+  const onScoreAssign = (updatedAbilities) => {
+    setAbilities(updatedAbilities);
+  };
+
+  const saveAbilityScores = async (playerId, abilityScores) => {
+    try {
+      const response = await axios.put(
+        `http://localhost:8080/api/players/id/${playerId}/update-scores`,
+        abilityScores
+      );
+      console.log("Player updated with new ability scores:", response.data);
+    } catch (error) {
+      console.error("Error updating ability scores:", error);
+    }
+  };
+
+  const finalizeScores = () => {
+    const abilityScores = {
+      strength: abilities.find((a) => a.name === "Strength").assignedScore,
+      dexterity: abilities.find((a) => a.name === "Dexterity").assignedScore,
+      intelligence: abilities.find((a) => a.name === "Intelligence")
+        .assignedScore,
+      wisdom: abilities.find((a) => a.name === "Wisdom").assignedScore,
+      charisma: abilities.find((a) => a.name === "Charisma").assignedScore,
+    };
+
+    if (playerData && playerData.id) {
+      saveAbilityScores(playerData.id, abilityScores);
+    } else {
+      console.error("Player ID is not available to save ability scores.");
+    }
+  };
+
   const savePlayer = async () => {
     try {
       const playerToSave = { ...playerData, id: null };
@@ -61,6 +116,7 @@ const PlayerComponent = () => {
       );
       console.log("Player saved:", response.data);
       dispatch(setPlayer(response.data));
+      setPlayerData(response.data);
     } catch (error) {
       console.error("Error saving player:", error);
     }
@@ -141,6 +197,16 @@ const PlayerComponent = () => {
             </div>
           )}
         </ParchmentBox>
+        <div className="generate-ability-scores">
+          <button onClick={generateScores}>Generate Ability Scores</button>
+          <AbilityScoreAssignment
+            generatedScores={generatedScores}
+            abilities={abilities}
+            onScoreAssign={onScoreAssign}
+          />
+          {/* Finalize button to submit the ability scores */}
+          <button onClick={finalizeScores}>Finalize Scores</button>
+        </div>
       </div>
     </div>
   );

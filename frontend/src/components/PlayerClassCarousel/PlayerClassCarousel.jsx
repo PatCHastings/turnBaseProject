@@ -33,6 +33,10 @@ const PlayerClassCarousel = ({ onClassChange, selectedClass }) => {
     { name: "Paladin", index: "paladin", image: paladin },
   ];
 
+  const handleClassClick = (index) => {
+    onClassChange(index);
+  };
+
   return (
     <div className="carousel-container">
       <Swiper
@@ -47,10 +51,10 @@ const PlayerClassCarousel = ({ onClassChange, selectedClass }) => {
             <img
               src={playerClass.image}
               alt={playerClass.name}
-              onClick={() => onClassChange(playerClass.index)} // Handle class change
+              onClick={() => handleClassClick(playerClass.index)} // Handle class change
               className={selectedClass === playerClass.index ? "selected" : ""}
             />
-            <h3>{playerClass.name}</h3>
+            <h3 className="classname-text">{playerClass.name}</h3>
           </SwiperSlide>
         ))}
       </Swiper>

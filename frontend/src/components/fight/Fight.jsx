@@ -1,6 +1,7 @@
 import React from "react";
 import { useSelector } from "react-redux";
 import "./fight.css";
+import "/assets/uiBackgrounds/player-menu.png";
 
 const FightComponent = () => {
   const player = useSelector((state) => state.player);
@@ -9,6 +10,11 @@ const FightComponent = () => {
 
   return (
     <div className="fight-container">
+      <img
+        src="../../../backgrounds/underground-arena.png"
+        alt="arena"
+        className="arena"
+      />
       <h1>Fight Screen</h1>
       <div className="fight-screen">
         <div className="player-side">

@@ -29,3 +29,8 @@
   flex-direction: column;
   align-items: center;
 }
+
+.modifier {
+  color: #0d8636; /* Choose a color that fits your design */
+  margin-left: 5px;
+}

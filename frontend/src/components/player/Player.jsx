@@ -95,6 +95,8 @@ const PlayerComponent = () => {
         abilityScores
       );
       console.log("Player updated with new ability scores:", response.data);
+      dispatch(setPlayer(response.data));
+      setPlayerData(response.data);
     } catch (error) {
       console.error("Error updating ability scores:", error);
     }
@@ -179,8 +181,30 @@ const PlayerComponent = () => {
             <p>Name: {playerData.name}</p>
             <p>Class: {selectedClass ? selectedClass.name : "N/A"}</p>
             <p>Health: {player.health}</p>
-            <p>Constitution: {player.constitution}</p>
-            <p>Constitution Modifier: {player.constitutionModifier}</p>
+            <p>
+              Constitution: {player.constitution}
+              <span className="modifier"> +{player.constitutionModifier}</span>
+            </p>
+            <p>
+              Strength: {player.strength}
+              <span className="modifier"> +{player.strengthModifier}</span>
+            </p>
+            <p>
+              Dexterity: {player.dexterity}
+              <span className="modifier"> +{player.dexterityModifier}</span>
+            </p>
+            <p>
+              Intelligence: {player.intelligence}
+              <span className="modifier"> +{player.intelligenceModifier}</span>
+            </p>
+            <p>
+              Wisdom: {player.wisdom}
+              <span className="modifier"> +{player.wisdomModifier}</span>
+            </p>
+            <p>
+              Charisma: {player.charisma}
+              <span className="modifier"> +{player.charismaModifier}</span>
+            </p>
           </div>
 
           {selectedClass && (

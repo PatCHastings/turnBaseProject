@@ -19,8 +19,15 @@ const FightComponent = () => {
               <p>Health: {player.health}</p>
               <p>Class: {selectedClass ? selectedClass.name : "N/A"}</p>
               <p>
-                Constitution: {player.constitution} +{""}
-                {player.constitutionModifier}
+                Constitution: {player.constitution}
+                <span className="modifier">
+                  {" "}
+                  +{player.constitutionModifier}
+                </span>
+              </p>
+              <p>
+                Strength: {player.strength} +{""}
+                {player.strengthModifier}
               </p>
             </div>
           ) : (

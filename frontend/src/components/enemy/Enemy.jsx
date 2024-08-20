@@ -87,7 +87,18 @@ const EnemyComponent = () => {
         charisma: response.data.charisma,
         challengeRating: response.data.challenge_rating,
         specialAbilities: response.data.special_abilities,
-        actions: response.data.actions,
+        actions: response.data.actions.map((action) => ({
+          name: action.name,
+          desc: action.desc,
+          attackBonus: action.attack_bonus || null,
+          count: action.count || null,
+          damage: action.damage
+            ? action.damage.map((d) => ({
+                damageDice: d.damage_dice,
+                damageType: d.damage_type ? d.damage_type.name : null,
+              }))
+            : [],
+        })),
       };
       console.log("New enemy payload:", newEnemy); // Log the payload
       saveEnemy(newEnemy);
@@ -178,11 +189,22 @@ const EnemyComponent = () => {
                 enemy.actions.map((action, index) => (
                   <li key={index}>
                     <strong>{action.name}:</strong> {action.desc}
+                    {action.attackBonus !== null && (
+                      <p>
+                        <strong>Attack Bonus:</strong> {action.attackBonus}
+                      </p>
+                    )}
+                    {action.count !== null && (
+                      <p>
+                        <strong>Count:</strong> {action.count}
+                      </p>
+                    )}
                     {action.damage && (
                       <ul>
-                        {action.damage.map((dmg, dmgIndex) => (
-                          <li key={dmgIndex}>
-                            <strong>{dmg.damageType}:</strong> {dmg.damageDice}
+                        {action.damage.map((damage, damageIndex) => (
+                          <li key={damageIndex}>
+                            <strong>{damage.damageType}:</strong>{" "}
+                            {damage.damageDice}
                           </li>
                         ))}
                       </ul>

@@ -29,7 +29,7 @@ const AbilityScoreAssignment = ({
   const isScoreUsed = (score) => usedScores.includes(score);
 
   return (
-    <div>
+    <div className="ability-container">
       {abilities.map((ability) => (
         <div
           key={ability.name}

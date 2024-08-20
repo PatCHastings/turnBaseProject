@@ -1,8 +1,15 @@
+.ability-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
 .ability-slot {
   cursor: pointer;
   padding: 8px;
   border: 1px solid #4b2c20;
   margin: 5px 0;
+  width: 150px;
 }
 
 .selected-ability {
@@ -21,5 +28,6 @@
 }
 
 .generated-scores button:hover {
-  background-color: #0056b3;
+  background-color: #ffa600;
+  color: black;
 }

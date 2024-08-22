@@ -7,6 +7,7 @@ const FightComponent = () => {
   const player = useSelector((state) => state.player);
   const enemy = useSelector((state) => state.enemy);
   const selectedClass = useSelector((state) => state.class.selectedClass);
+  const playerData = useSelector((state) => state.player);
 
   return (
     <div className="fight-container">
@@ -18,7 +19,7 @@ const FightComponent = () => {
       <h1>Fight Screen</h1>
       <div className="fight-screen">
         <div className="player-side">
-          <h3>Player</h3>
+          <img src={playerData.characterImage} className="barbarian-happy" />
           {player ? (
             <div>
               <p>Name: {player.name}</p>
@@ -32,8 +33,27 @@ const FightComponent = () => {
                 </span>
               </p>
               <p>
-                Strength: {player.strength} +{""}
-                {player.strengthModifier}
+                Strength: {player.strength}
+                <span className="modifier"> +{player.strengthModifier}</span>
+              </p>
+              <p>
+                Dexterity: {player.dexterity}
+                <span className="modifier"> +{player.dexterityModifier}</span>
+              </p>
+              <p>
+                Intelligence: {player.intelligence}
+                <span className="modifier">
+                  {" "}
+                  +{player.intelligenceModifier}
+                </span>
+              </p>
+              <p>
+                Wisdom: {player.wisdom}
+                <span className="modifier"> +{player.wisdomModifier}</span>
+              </p>
+              <p>
+                Charisma: {player.charisma}
+                <span className="modifier"> +{player.charismaModifier}</span>
               </p>
             </div>
           ) : (
@@ -45,7 +65,11 @@ const FightComponent = () => {
           <div className="combat-log"></div>
         </div>
         <div className="enemy-side">
-          <h3>Enemy</h3>
+          <img
+            src="/assets/enemies/minotaur.png"
+            alt="enemy"
+            className="enemy"
+          />
           {enemy ? (
             <div>
               <p>Name: {enemy.enemyName}</p>

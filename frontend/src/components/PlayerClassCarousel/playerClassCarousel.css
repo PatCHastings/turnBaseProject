@@ -1,11 +1,7 @@
 .carousel-container {
-  background-image: url("../../../backgrounds/ruins.png");
+  /* background-image: url("../../../backgrounds/ruins.png"); */
   background-repeat: no-repeat;
-  padding: 20px;
-  border: 2px solid #c4a484;
-}
-
-.characterPic {
+  padding: 1px;
 }
 
 .characterPic-className {

@@ -7,6 +7,13 @@ import PlayerClassCarousel from "../PlayerClassCarousel/PlayerClassCarousel";
 import ParchmentBox from "../parchmentBox/ParchmentBox";
 import AbilityScoreAssignment from "../abilityScoreAssignment/AbilityScoreAssignment";
 
+const classImages = {
+  fighter: "/assets/playerCharacters/fighter/fighter-serious.png",
+  barbarian: "/assets/playerCharacters/barbarian/barbarian-happy.png",
+  wizard: "/assets/playerCharacters/wizard/wizard-serious.png",
+  rogue: "/assets/playerCharacters/rogue/rogue-serious.png",
+};
+
 const PlayerComponent = () => {
   const dispatch = useDispatch();
   const player = useSelector((state) => state.player);
@@ -123,7 +130,16 @@ const PlayerComponent = () => {
 
   const savePlayer = async () => {
     try {
-      const playerToSave = { ...playerData, id: null };
+      const characterClass = playerData.characterClass;
+      const characterImage = characterClass
+        ? classImages[characterClass.index]
+        : null;
+
+      const playerToSave = {
+        ...playerData,
+        id: null,
+        characterImage: characterImage,
+      };
       const response = await axios.post(
         "http://localhost:8080/api/players",
         playerToSave,
@@ -149,17 +165,16 @@ const PlayerComponent = () => {
   return (
     <div className="player-container">
       <h2>Create Player</h2>
+      <img src="../../../backgrounds/ruins.png" className="ruins" alt="ruins" />
       <PlayerClassCarousel
         onClassChange={handleClassChange}
         selectedClass={
           playerData.characterClass ? playerData.characterClass.index : ""
         }
       />
-
       <div className="player-form">
         <div>
           <label className="player-name">
-            Player Name:
             <input
               type="text"
               name="name"
@@ -168,43 +183,58 @@ const PlayerComponent = () => {
             />
           </label>
         </div>
-        <div></div>
         {/* Save Player Button will only be enabled if all fields are valid */}
         <button onClick={savePlayer} disabled={!isReadyToSave}>
           Save Player
         </button>
       </div>
       <div className="">
-        <ParchmentBox>
-          <div className="player-info">
-            <h3>Player Info</h3>
-            <p>Name: {playerData.name}</p>
-            <p>Class: {selectedClass ? selectedClass.name : "N/A"}</p>
-            <p>Health: {player.health}</p>
-            <p>
-              Constitution: {player.constitution}
-              <span className="modifier"> +{player.constitutionModifier}</span>
-            </p>
-            <p>
-              Strength: {player.strength}
-              <span className="modifier"> +{player.strengthModifier}</span>
-            </p>
-            <p>
-              Dexterity: {player.dexterity}
-              <span className="modifier"> +{player.dexterityModifier}</span>
-            </p>
-            <p>
-              Intelligence: {player.intelligence}
-              <span className="modifier"> +{player.intelligenceModifier}</span>
-            </p>
-            <p>
-              Wisdom: {player.wisdom}
-              <span className="modifier"> +{player.wisdomModifier}</span>
-            </p>
-            <p>
-              Charisma: {player.charisma}
-              <span className="modifier"> +{player.charismaModifier}</span>
-            </p>
+        <ParchmentBox className={""}>
+          <div className="player-info-player-pic">
+            <div className="player-info">
+              <h3>Player Info</h3>
+              <p>Name: {playerData.name}</p>
+              <p>Class: {selectedClass ? selectedClass.name : "N/A"}</p>
+              <p>Health: {player.health}</p>
+              <p>
+                Constitution: {player.constitution}
+                <span className="modifier">
+                  {" "}
+                  +{player.constitutionModifier}
+                </span>
+              </p>
+              <p>
+                Strength: {player.strength}
+                <span className="modifier"> +{player.strengthModifier}</span>
+              </p>
+              <p>
+                Dexterity: {player.dexterity}
+                <span className="modifier"> +{player.dexterityModifier}</span>
+              </p>
+              <p>
+                Intelligence: {player.intelligence}
+                <span className="modifier">
+                  {" "}
+                  +{player.intelligenceModifier}
+                </span>
+              </p>
+              <p>
+                Wisdom: {player.wisdom}
+                <span className="modifier"> +{player.wisdomModifier}</span>
+              </p>
+              <p>
+                Charisma: {player.charisma}
+                <span className="modifier"> +{player.charismaModifier}</span>
+              </p>
+            </div>
+            <div className="picture-side">
+              {playerData.characterImage && (
+                <img
+                  src={playerData.characterImage}
+                  className="character-image"
+                />
+              )}
+            </div>
           </div>
 
           {selectedClass && (

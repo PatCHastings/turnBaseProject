@@ -2,8 +2,14 @@
   display: flex;
   flex-direction: column;
   align-items: center;
+  position: relative;
   margin-top: 0px;
-  padding: 30px;
+}
+
+.ruins {
+  position: absolute;
+  max-width: 100%;
+  z-index: -1;
 }
 
 .player-name {
@@ -13,11 +19,36 @@
   font-weight: bold;
 }
 
-.player-class {
+.player-info-player-pic {
   display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+.picture-side {
+  flex-direction: column;
+  max-width: 200px;
+}
+
+.player-info {
   flex-direction: column;
   font-size: 18px;
+  max-width: 200px;
 }
+
+.character-image {
+  display: flex;
+  align-items: center;
+  max-width: 80%;
+  height: auto;
+}
+
+.class-info {
+  flex-direction: column;
+  font-size: 18px;
+  max-width: 200px;
+}
+
 .stat-block {
   width: 400px;
   height: 400px;

@@ -40,6 +40,7 @@ const PlayerClassCarousel = ({ onClassChange, selectedClass }) => {
   return (
     <div className="carousel-container">
       <Swiper
+        className="player-class-carousel"
         spaceBetween={0}
         slidesPerView={"auto"}
         loop={true}

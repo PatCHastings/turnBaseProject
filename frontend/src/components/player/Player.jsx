@@ -12,6 +12,9 @@ const classImages = {
   barbarian: "/assets/playerCharacters/barbarian/barbarian-happy.png",
   wizard: "/assets/playerCharacters/wizard/wizard-serious.png",
   rogue: "/assets/playerCharacters/rogue/rogue-serious.png",
+  ranger: "/assets/playerCharacters/ranger/ranger-happy.png",
+  monk: "/assets/playerCharacters/monk/monk-serious.png",
+  bard: "/assets/playerCharacters/bard/bard-serious.png",
 };
 
 const PlayerComponent = () => {

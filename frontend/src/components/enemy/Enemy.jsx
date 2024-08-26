@@ -79,6 +79,7 @@ const EnemyComponent = () => {
         alignment: response.data.alignment,
         armorClass: response.data.armor_class,
         speed: speed,
+        type: response.data.type,
         strength: response.data.strength,
         dexterity: response.data.dexterity,
         constitution: response.data.constitution,

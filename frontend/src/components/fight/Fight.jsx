@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import axios from "axios";
 import "./fight.css";
+import ScrollingLog from "../logs/ScrollingLog.jsx";
+import TextDamageFX from "../textFXs/TextDamageFX.jsx";
 import { setPlayer, updatePlayerHealth } from "../store/Store"; // Import setPlayer and updatePlayerHealth actions
 import { setEnemy, updateEnemyHealth } from "../store/Store"; // Import setEnemy and updateEnemyHealth actions
 
@@ -131,12 +133,6 @@ const FightComponent = () => {
           )}
         </div>
         <div className="combat-section">
-          <h2>Combat Log</h2>
-          <div className="combat-log">
-            {combatLog.map((entry, index) => (
-              <p key={index}>{entry}</p>
-            ))}
-          </div>
           <div className="combat-actions">
             <button
               onClick={() => performAction("attack")}
@@ -146,8 +142,13 @@ const FightComponent = () => {
             </button>
             {/* Add more buttons for different actions like Defend, Use Item, etc. */}
           </div>
+          <h2>Combat Log</h2>
+          <div className="combat-log">
+            <ScrollingLog entries={combatLog} />
+          </div>
         </div>
         <div className="enemy-side">
+          <TextDamageFX combatLog={combatLog} />
           <img
             src="/assets/enemies/minotaur.png"
             alt="enemy"

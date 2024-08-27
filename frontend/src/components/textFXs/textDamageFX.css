@@ -1,0 +1,21 @@
+.damage-popup {
+  position: absolute;
+  transform: translateX(-50%);
+  color: red;
+  font-size: 24px;
+  font-weight: bold;
+  pointer-events: none;
+  opacity: 0;
+  z-index: 100;
+}
+
+@keyframes floatUp {
+  0% {
+    transform: translateX(-50%) translateY(0);
+    opacity: 1;
+  }
+  100% {
+    transform: translateX(-50%) translateY(-50px);
+    opacity: 0;
+  }
+}

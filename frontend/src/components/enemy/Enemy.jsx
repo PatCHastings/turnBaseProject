@@ -72,12 +72,15 @@ const EnemyComponent = () => {
       }
 
       const newEnemy = {
-        enemyName: response.data.name,
-        enemyHealth: response.data.hit_points,
+        name: response.data.name,
+        health: response.data.hit_points,
         enemyType: response.data.type,
         size: response.data.size,
         alignment: response.data.alignment,
-        armorClass: response.data.armor_class,
+        armorClass: response.data.armor_class.map((ac) => ({
+          type: ac.type,
+          armorValue: ac.value,
+        })),
         speed: speed,
         type: response.data.type,
         strength: response.data.strength,
@@ -121,16 +124,16 @@ const EnemyComponent = () => {
             {enemy.imageUrl && (
               <img
                 src={enemy.imageUrl}
-                alt={enemy.enemyName}
+                alt={enemy.name}
                 className="monster-image"
               />
             )}
             <div className="monster-info">
               <p>
-                <strong>Name:</strong> {enemy.enemyName}
+                <strong>Name:</strong> {enemy.name}
               </p>
               <p>
-                <strong>Health:</strong> {enemy.enemyHealth}
+                <strong>Health:</strong> {enemy.health}
               </p>
               <p>
                 <strong>Size:</strong> {enemy.size}
@@ -148,7 +151,7 @@ const EnemyComponent = () => {
               {enemy.armorClass &&
                 enemy.armorClass.map((ac, index) => (
                   <p key={index}>
-                    {ac.type}: {ac.value}
+                    {ac.type}: {ac.armorValue}
                   </p>
                 ))}
             </div>

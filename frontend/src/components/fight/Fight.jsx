@@ -155,8 +155,8 @@ const FightComponent = () => {
           />
           {enemy ? (
             <div>
-              <p>Name: {enemy.enemyName}</p>
-              <p>Health: {enemy.enemyHealth}</p>
+              <p>Name: {enemy.name}</p>
+              <p>Health: {enemy.health}</p>
               <p>Type: {enemy.type}</p>
             </div>
           ) : (

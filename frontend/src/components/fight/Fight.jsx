@@ -1,13 +1,79 @@
-import React from "react";
-import { useSelector } from "react-redux";
+import React, { useState } from "react";
+import { useSelector, useDispatch } from "react-redux";
+import axios from "axios";
 import "./fight.css";
-import "/assets/uiBackgrounds/player-menu.png";
+import { setPlayer, updatePlayerHealth } from "../store/Store"; // Import setPlayer and updatePlayerHealth actions
+import { setEnemy, updateEnemyHealth } from "../store/Store"; // Import setEnemy and updateEnemyHealth actions
 
 const FightComponent = () => {
+  const dispatch = useDispatch();
   const player = useSelector((state) => state.player);
   const enemy = useSelector((state) => state.enemy);
   const selectedClass = useSelector((state) => state.class.selectedClass);
   const playerData = useSelector((state) => state.player);
+  const [combatLog, setCombatLog] = useState([]);
+  const [actionPending, setActionPending] = useState(false);
+
+  const startCombat = async () => {
+    try {
+      const response = await axios.post(
+        "http://localhost:8080/combat/start",
+        null,
+        {
+          params: { playerId: player.id, enemyId: enemy.id },
+        }
+      );
+      setCombatLog([...combatLog, ...response.data.log]);
+    } catch (error) {
+      console.error("Error starting combat:", error);
+      setCombatLog([...combatLog, "Error starting combat: " + error.message]);
+    }
+  };
+
+  const performAction = async (actionType) => {
+    setActionPending(true);
+    try {
+      const response = await axios.post(
+        "http://localhost:8080/combat/action",
+        null,
+        {
+          params: {
+            playerId: player.id,
+            enemyId: enemy.id,
+            actionType: actionType,
+          },
+        }
+      );
+
+      const data = response.data;
+      if (data.log && Array.isArray(data.log)) {
+        setCombatLog((prevLog) => [...prevLog, ...data.log]);
+      } else {
+        setCombatLog((prevLog) => [
+          ...prevLog,
+          "Unexpected data format: " + response.data,
+        ]);
+      }
+
+      // Update player and enemy health in the global state
+      dispatch(updatePlayerHealth(data.playerHealth));
+      dispatch(updateEnemyHealth(data.enemyHealth));
+
+      if (data.playerHealth <= 0) {
+        setCombatLog((prevLog) => [...prevLog, "Player has been defeated!"]);
+      } else if (data.enemyHealth <= 0) {
+        setCombatLog((prevLog) => [...prevLog, "Enemy has been defeated!"]);
+      }
+    } catch (error) {
+      console.error("Error performing action:", error);
+      setCombatLog((prevLog) => [
+        ...prevLog,
+        "Error performing action: " + error.message,
+      ]);
+    } finally {
+      setActionPending(false);
+    }
+  };
 
   return (
     <div className="fight-container">
@@ -19,7 +85,11 @@ const FightComponent = () => {
       <h1>Fight Screen</h1>
       <div className="fight-screen">
         <div className="player-side">
-          <img src={playerData.characterImage} className="barbarian-happy" />
+          <img
+            src={playerData.characterImage}
+            className="barbarian-happy"
+            alt="player"
+          />
           {player ? (
             <div>
               <p>Name: {player.name}</p>
@@ -62,7 +132,20 @@ const FightComponent = () => {
         </div>
         <div className="combat-section">
           <h2>Combat Log</h2>
-          <div className="combat-log"></div>
+          <div className="combat-log">
+            {combatLog.map((entry, index) => (
+              <p key={index}>{entry}</p>
+            ))}
+          </div>
+          <div className="combat-actions">
+            <button
+              onClick={() => performAction("attack")}
+              disabled={actionPending}
+            >
+              Attack
+            </button>
+            {/* Add more buttons for different actions like Defend, Use Item, etc. */}
+          </div>
         </div>
         <div className="enemy-side">
           <img

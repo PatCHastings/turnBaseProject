@@ -27,6 +27,9 @@ const playerSlice = createSlice({
     setPlayer(state, action) {
       return { ...state, ...action.payload };
     },
+    updatePlayerHealth(state, action) {
+      state.health = action.payload;
+    },
   },
 });
 
@@ -37,6 +40,9 @@ const enemySlice = createSlice({
   reducers: {
     setEnemy(state, action) {
       return { ...state, ...action.payload };
+    },
+    updateEnemyHealth(state, action) {
+      state.health = action.payload;
     },
   },
 });
@@ -56,8 +62,8 @@ const classSlice = createSlice({
 });
 
 // Export actions
-export const { setPlayer } = playerSlice.actions;
-export const { setEnemy } = enemySlice.actions;
+export const { setPlayer, updatePlayerHealth } = playerSlice.actions;
+export const { setEnemy, updateEnemyHealth } = enemySlice.actions;
 export const { setClasses, setSelectedClass } = classSlice.actions;
 
 // Thunk actions

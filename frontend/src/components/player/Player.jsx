@@ -22,11 +22,13 @@ const PlayerComponent = () => {
   const player = useSelector((state) => state.player);
   const classes = useSelector((state) => state.class.classes);
   const selectedClass = useSelector((state) => state.class.selectedClass);
-  const [playerData, setPlayerData] = useState(player);
-  const [generatedScores, setGeneratedScores] = useState([]);
-  const [isReadyToSave, setIsReadyToSave] = useState(false);
-  const [isScoreGenerated, setIsScoreGenerated] = useState(false);
 
+  const [playerData, setPlayerData] = useState({
+    name: "",
+    characterClass: null,
+    characterImage: null,
+  });
+  const [generatedScores, setGeneratedScores] = useState([]);
   const [abilities, setAbilities] = useState([
     { name: "Strength", assignedScore: null },
     { name: "Dexterity", assignedScore: null },
@@ -35,6 +37,8 @@ const PlayerComponent = () => {
     { name: "Wisdom", assignedScore: null },
     { name: "Charisma", assignedScore: null },
   ]);
+  const [isReadyToSave, setIsReadyToSave] = useState(false);
+  const [isScoreGenerated, setIsScoreGenerated] = useState(false);
 
   useEffect(() => {
     if (classes.length === 0) {
@@ -47,20 +51,22 @@ const PlayerComponent = () => {
   }, [selectedClass]);
 
   useEffect(() => {
-    // Resets playerData if changing routes to avoid overwriting the player state
     setPlayerData({
+      ...playerData,
       name: "",
-      health: null,
       characterClass: null,
+      characterImage: null,
     });
   }, []);
 
   const handleClassChange = (classIndex) => {
     if (classIndex) {
       dispatch(fetchClassDetails(classIndex));
+      const selectedClass = classes.find((cls) => cls.index === classIndex);
       setPlayerData((prevPlayer) => ({
         ...prevPlayer,
-        characterClass: classes.find((cls) => cls.index === classIndex),
+        characterClass: selectedClass || null,
+        characterImage: selectedClass ? classImages[selectedClass.index] : null,
       }));
     }
   };
@@ -87,7 +93,6 @@ const PlayerComponent = () => {
     setAbilities(updatedAbilities);
     setGeneratedScores(updatedScores);
 
-    // Check if all abilities have been assigned and set isReadyToSave accordingly
     const allAssigned = updatedAbilities.every(
       (ability) => ability.assignedScore !== null
     );
@@ -98,17 +103,46 @@ const PlayerComponent = () => {
     }
   };
 
-  const saveAbilityScores = async (playerId, abilityScores) => {
+  const savePlayer = async () => {
     try {
-      const response = await axios.put(
-        `http://localhost:8080/api/players/id/${playerId}/update-scores`,
-        abilityScores
+      const characterClass = playerData.characterClass;
+      const characterImage = characterClass
+        ? classImages[characterClass.index]
+        : null;
+
+      const playerToSave = {
+        name: playerData.name, // Ensure only necessary fields are sent
+        characterClass: characterClass,
+        characterImage: characterImage,
+      };
+
+      console.log("Player data before sending:", playerToSave);
+
+      const response = await axios.post(
+        "http://localhost:8080/api/players",
+        playerToSave,
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
       );
-      console.log("Player updated with new ability scores:", response.data);
+
+      console.log("Player saved:", response.data);
       dispatch(setPlayer(response.data));
       setPlayerData(response.data);
+      if (response.data.name && response.data.characterClass) {
+        setIsReadyToSave(true);
+      }
     } catch (error) {
-      console.error("Error updating ability scores:", error);
+      if (error.response && error.response.status === 409) {
+        console.error("A player with this name already exists.");
+        alert(
+          "A player with this name already exists. Please choose a different name."
+        );
+      } else {
+        console.error("Error saving player:", error);
+      }
     }
   };
 
@@ -131,37 +165,23 @@ const PlayerComponent = () => {
     }
   };
 
-  const savePlayer = async () => {
+  const saveAbilityScores = async (playerId, abilityScores) => {
     try {
-      const characterClass = playerData.characterClass;
-      const characterImage = characterClass
-        ? classImages[characterClass.index]
-        : null;
-
-      const playerToSave = {
-        ...playerData,
-        id: null,
-        characterImage: characterImage,
-      };
-      const response = await axios.post(
-        "http://localhost:8080/api/players",
-        playerToSave,
+      console.log("Ability Scores being sent:", abilityScores);
+      const response = await axios.put(
+        `http://localhost:8080/api/players/id/${playerId}/update-scores`,
+        abilityScores, // Sending only the ability scores
         {
           headers: {
             "Content-Type": "application/json",
           },
         }
       );
-      console.log("Player saved:", response.data);
+      console.log("Player updated with new ability scores:", response.data);
       dispatch(setPlayer(response.data));
       setPlayerData(response.data);
-
-      // After saving the player, check if all required fields are filled and enable the save button
-      if (playerData.name && playerData.characterClass && isReadyToSave) {
-        setIsReadyToSave(true);
-      }
     } catch (error) {
-      console.error("Error saving player:", error);
+      console.error("Error updating ability scores:", error);
     }
   };
 
@@ -181,7 +201,7 @@ const PlayerComponent = () => {
             <input
               type="text"
               name="name"
-              value={playerData.name}
+              value={playerData.name || ""}
               onChange={handleInputChange}
             />
           </label>
@@ -246,14 +266,10 @@ const PlayerComponent = () => {
               <p>Name: {selectedClass.name}</p>
               <p>Hit Die: {selectedClass.hit_die}</p>
               <h4>Equipment</h4>
-              {console.log(
-                "Selected Class Starting Equipment:",
-                selectedClass.starting_equipment
-              )}
               <ul>
-                {selectedClass.startingEquipment &&
-                selectedClass.startingEquipment.length > 0 ? (
-                  selectedClass.startingEquipment.map((item, index) => (
+                {selectedClass.starting_equipment &&
+                selectedClass.starting_equipment.length > 0 ? (
+                  selectedClass.starting_equipment.map((item, index) => (
                     <li key={index}>
                       {item.equipment.name} (Quantity: {item.quantity})
                     </li>

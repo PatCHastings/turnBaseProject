@@ -61,13 +61,17 @@ const PlayerComponent = () => {
 
   const handleClassChange = (classIndex) => {
     if (classIndex) {
-      dispatch(fetchClassDetails(classIndex));
       const selectedClass = classes.find((cls) => cls.index === classIndex);
-      setPlayerData((prevPlayer) => ({
-        ...prevPlayer,
-        characterClass: selectedClass || null,
-        characterImage: selectedClass ? classImages[selectedClass.index] : null,
-      }));
+
+      if (selectedClass) {
+        dispatch(fetchClassDetails(classIndex));
+
+        setPlayerData((prevPlayer) => ({
+          ...prevPlayer,
+          characterClass: selectedClass,
+          characterImage: classImages[selectedClass.index],
+        }));
+      }
     }
   };
 

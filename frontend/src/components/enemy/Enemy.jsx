@@ -32,24 +32,6 @@ const EnemyComponent = () => {
     fetchMonsters();
   }, []);
 
-  const saveEnemy = async (newEnemy) => {
-    try {
-      const response = await axios.post(
-        "http://localhost:8080/api/enemies",
-        newEnemy,
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
-      console.log("Enemy saved:", response.data);
-      dispatch(setEnemy(response.data)); // Update the context state
-    } catch (error) {
-      console.error("Error saving enemy:", error);
-    }
-  };
-
   const createEnemy = async () => {
     if (!monsters || monsters.length === 0) {
       console.error("No monsters available or monsters is undefined");
@@ -105,10 +87,63 @@ const EnemyComponent = () => {
         })),
       };
       console.log("New enemy payload:", newEnemy); // Log the payload
-      saveEnemy(newEnemy);
+      const savedEnemy = await saveEnemy(newEnemy);
+      const enemyId = savedEnemy.id;
+      saveEnemyAbilityScores(enemyId, savedEnemy);
     } catch (error) {
       console.error("Error fetching monster details:", error);
     }
+  };
+
+  const updateAbilityScores = async (enemyId, abilityScores) => {
+    try {
+      const response = await axios.put(
+        `http://localhost:8080/api/enemies/${enemyId}/update-scores`,
+        abilityScores,
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      console.log("Enemy updated with new ability scores:", response.data);
+      dispatch(setEnemy(response.data));
+    } catch (error) {
+      console.error("Error updating ability scores:", error);
+    }
+  };
+
+  const saveEnemy = async (newEnemy) => {
+    try {
+      const response = await axios.post(
+        "http://localhost:8080/api/enemies",
+        newEnemy,
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      console.log("Enemy saved:", response.data);
+      dispatch(setEnemy(response.data));
+      return response.data;
+    } catch (error) {
+      console.error("Error saving enemy:", error);
+      throw error;
+    }
+  };
+
+  const saveEnemyAbilityScores = (enemyId, savedEnemy) => {
+    const abilityScores = {
+      strength: savedEnemy.strength,
+      dexterity: savedEnemy.dexterity,
+      constitution: savedEnemy.constitution,
+      intelligence: savedEnemy.intelligence,
+      wisdom: savedEnemy.wisdom,
+      charisma: savedEnemy.charisma,
+    };
+
+    updateAbilityScores(enemyId, abilityScores);
   };
 
   return (

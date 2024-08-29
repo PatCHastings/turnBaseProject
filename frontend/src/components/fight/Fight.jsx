@@ -159,6 +159,30 @@ const FightComponent = () => {
               <p>Name: {enemy.name}</p>
               <p>Health: {enemy.health}</p>
               <p>Type: {enemy.type}</p>
+              <p>
+                Constitution: {enemy.constitution}
+                <span className="modifier"> +{enemy.constitutionModifier}</span>
+              </p>
+              <p>
+                Strength: {enemy.strength}
+                <span className="modifier"> +{enemy.strengthModifier}</span>
+              </p>
+              <p>
+                Dexterity: {enemy.dexterity}
+                <span className="modifier"> +{enemy.dexterityModifier}</span>
+              </p>
+              <p>
+                Intelligence: {enemy.intelligence}
+                <span className="modifier"> +{enemy.intelligenceModifier}</span>
+              </p>
+              <p>
+                Wisdom: {enemy.wisdom}
+                <span className="modifier"> +{enemy.wisdomModifier}</span>
+              </p>
+              <p>
+                Charisma: {enemy.charisma}
+                <span className="modifier"> +{enemy.charismaModifier}</span>
+              </p>
             </div>
           ) : (
             <p>No enemy generated.</p>

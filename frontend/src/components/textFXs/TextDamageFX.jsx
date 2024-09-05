@@ -1,14 +1,15 @@
 import React, { useState, useEffect } from "react";
 import "./textDamageFX.css";
 
-const TextDamageFX = ({ combatLog }) => {
+const TextDamageFX = ({ combatLog, characterId }) => {
   const [damagePopups, setDamagePopups] = useState([]);
 
   useEffect(() => {
-    if (combatLog.length > 0) {
-      const lastEntry = combatLog[combatLog.length - 1];
-      if (lastEntry.includes("damage")) {
-        const damage = extractDamageFromLog(lastEntry);
+    const lastEntry = combatLog[combatLog.length - 1];
+    if (lastEntry) {
+      const { attackerId, defenderId, damage } = lastEntry;
+
+      if (defenderId === characterId && damage) {
         const id = Math.random().toString(36).substr(2, 9);
         setDamagePopups((prev) => [...prev, { id, damage }]);
 
@@ -20,13 +21,7 @@ const TextDamageFX = ({ combatLog }) => {
         }, 1500);
       }
     }
-  }, [combatLog]);
-
-  const extractDamageFromLog = (logEntry) => {
-    // Extract the damage value from the log entry
-    const match = logEntry.match(/(\d+) damage/);
-    return match ? match[1] : null;
-  };
+  }, [combatLog, characterId]);
 
   return (
     <>

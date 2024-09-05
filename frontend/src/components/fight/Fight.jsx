@@ -4,8 +4,8 @@ import axios from "axios";
 import "./fight.css";
 import ScrollingLog from "../logs/ScrollingLog.jsx";
 import TextDamageFX from "../textFXs/TextDamageFX.jsx";
-import { setPlayer, updatePlayerHealth } from "../store/Store"; // Import setPlayer and updatePlayerHealth actions
-import { setEnemy, updateEnemyHealth } from "../store/Store"; // Import setEnemy and updateEnemyHealth actions
+import { setPlayer, updatePlayerHealth } from "../store/Store";
+import { setEnemy, updateEnemyHealth } from "../store/Store";
 
 const FightComponent = () => {
   const dispatch = useDispatch();
@@ -15,8 +15,14 @@ const FightComponent = () => {
   const playerData = useSelector((state) => state.player);
   const [combatLog, setCombatLog] = useState([]);
   const [actionPending, setActionPending] = useState(false);
+  const [combatStarted, setCombatStarted] = useState(false);
+  const [playerTurn, setPlayerTurn] = useState(null);
 
   const startCombat = async () => {
+    console.log("Begin Fight clicked");
+    setActionPending(true);
+    console.log("Player ID:", player.id);
+    console.log("Enemy ID:", enemy.id);
     try {
       const response = await axios.post(
         "http://localhost:8080/combat/start",
@@ -25,14 +31,66 @@ const FightComponent = () => {
           params: { playerId: player.id, enemyId: enemy.id },
         }
       );
-      setCombatLog([...combatLog, ...response.data.log]);
+
+      if (response && response.data) {
+        console.log("Start combat response:", response.data);
+        setCombatLog((prevLog) => [...prevLog, ...response.data.log]);
+        setPlayerTurn(response.data.playerTurn);
+        setCombatStarted(true);
+        console.log(
+          "Player Turn after start combat:",
+          response.data.playerTurn
+        );
+
+        if (!response.data.playerTurn) {
+          // Enemy's turn
+          await performEnemyAction(); // Call the enemy action method here
+        }
+      } else {
+        setCombatLog((prevLog) => [
+          ...prevLog,
+          { actionDescription: "Error: No response data from server." },
+        ]);
+      }
     } catch (error) {
       console.error("Error starting combat:", error);
-      setCombatLog([...combatLog, "Error starting combat: " + error.message]);
+      setCombatLog((prevLog) => [
+        ...prevLog,
+        { actionDescription: "Error starting combat: " + error.message },
+      ]);
+    }
+    setActionPending(false);
+  };
+
+  const performEnemyAction = async () => {
+    try {
+      console.log("Enemy action triggered");
+      const response = await performAction("enemyaction");
+      if (response && response.data) {
+        console.log("Enemy action response:", response.data);
+        setCombatLog((prevLog) => [...prevLog, ...response.data.log]);
+
+        if (response.data.playerTurn) {
+          // Now it's the player's turn
+          setPlayerTurn(true);
+          console.log("Now it's the player's turn.");
+        } else {
+          console.log("Enemy's turn again."); // Enemy's turn continues
+        }
+      }
+    } catch (error) {
+      console.error("Error performing enemy action:", error);
+      setCombatLog((prevLog) => [
+        ...prevLog,
+        {
+          actionDescription: "Error performing enemy action: " + error.message,
+        },
+      ]);
     }
   };
 
   const performAction = async (actionType) => {
+    console.log(actionType + " clicked");
     setActionPending(true);
     try {
       const response = await axios.post(
@@ -47,30 +105,55 @@ const FightComponent = () => {
         }
       );
 
-      const data = response.data;
-      if (data.log && Array.isArray(data.log)) {
+      if (response) {
+        console.log("Response received:", response);
+      } else {
+        console.log("No response received from the server.");
+      }
+
+      if (response && response.data) {
+        console.log("Perform action response:", response.data);
+        const data = response.data;
+
         setCombatLog((prevLog) => [...prevLog, ...data.log]);
+
+        dispatch(updatePlayerHealth(data.playerHealth));
+        dispatch(updateEnemyHealth(data.enemyHealth));
+        // Debug logs to confirm updates
+        console.log("Updated Player Health:", data.playerHealth);
+        console.log("Updated Enemy Health:", data.enemyHealth);
+
+        if (data.playerHealth <= 0) {
+          setCombatLog((prevLog) => [
+            ...prevLog,
+            { actionDescription: "Player has been defeated!" },
+          ]);
+        } else if (data.enemyHealth <= 0) {
+          setCombatLog((prevLog) => [
+            ...prevLog,
+            { actionDescription: "Enemy has been defeated!" },
+          ]);
+        } else {
+          // Update the turn state after each action
+          setPlayerTurn(data.playerTurn);
+          console.log("Player Turn after action:", data.playerTurn);
+
+          // If it's not the player's turn, trigger the enemy's action
+          if (!response.data.playerTurn) {
+            await performEnemyAction(); // Avoid directly calling performAction again
+          }
+        }
       } else {
         setCombatLog((prevLog) => [
           ...prevLog,
-          "Unexpected data format: " + response.data,
+          { actionDescription: "Error: No response data from server." },
         ]);
       }
-
-      // Update player and enemy health in the global state
-      dispatch(updatePlayerHealth(data.playerHealth));
-      dispatch(updateEnemyHealth(data.enemyHealth));
-
-      if (data.playerHealth <= 0) {
-        setCombatLog((prevLog) => [...prevLog, "Player has been defeated!"]);
-      } else if (data.enemyHealth <= 0) {
-        setCombatLog((prevLog) => [...prevLog, "Enemy has been defeated!"]);
-      }
     } catch (error) {
-      console.error("Error performing action:", error);
+      console.error("Error performing action:", error.message);
       setCombatLog((prevLog) => [
         ...prevLog,
-        "Error performing action: " + error.message,
+        { actionDescription: "Error performing action: " + error.message },
       ]);
     } finally {
       setActionPending(false);
@@ -87,6 +170,8 @@ const FightComponent = () => {
       <h1>Fight Screen</h1>
       <div className="fight-screen">
         <div className="player-side">
+          {/* Player damage popup */}
+          <TextDamageFX combatLog={combatLog} characterId={player.id} />
           <img
             src={playerData.characterImage}
             className="barbarian-happy"
@@ -134,13 +219,25 @@ const FightComponent = () => {
         </div>
         <div className="combat-section">
           <div className="combat-actions">
-            <button
-              onClick={() => performAction("attack")}
-              disabled={actionPending}
-            >
-              Attack
-            </button>
-            {/* Add more buttons for different actions like Defend, Use Item, etc. */}
+            {!combatStarted ? (
+              <button onClick={startCombat} disabled={actionPending}>
+                Begin Fight
+              </button>
+            ) : playerTurn ? (
+              <button
+                onClick={() => performAction("attack")}
+                disabled={actionPending}
+              >
+                Attack
+              </button>
+            ) : (
+              <button
+                onClick={() => setPlayerTurn(!playerTurn)}
+                disabled={actionPending}
+              >
+                End Turn
+              </button>
+            )}
           </div>
           <h2>Combat Log</h2>
           <div className="combat-log">
@@ -148,7 +245,7 @@ const FightComponent = () => {
           </div>
         </div>
         <div className="enemy-side">
-          <TextDamageFX combatLog={combatLog} />
+          <TextDamageFX combatLog={combatLog} characterId={enemy.id} />
           <img
             src="/assets/enemies/minotaur.png"
             alt="enemy"

@@ -95,6 +95,81 @@ const EnemyComponent = () => {
     }
   };
 
+  // Function to create an enemy from a monster with a challenge rating of 0
+  const createEnemyWithChallengeRatingZero = async () => {
+    try {
+      // Step 1: Fetch monsters with challengeRating = 0 from your backend
+      const response = await axios.get(
+        "http://localhost:8080/api/external/monsters/challenge-rating/0"
+      );
+      const monsters = response.data;
+
+      // Step 2: Randomly pick one of the monsters from the filtered list
+      if (monsters && monsters.length > 0) {
+        const randomMonster =
+          monsters[Math.floor(Math.random() * monsters.length)];
+        console.log("Selected Monster:", randomMonster);
+
+        // Step 3: Use the selected monster's index to fetch full details from the external D&D API
+        const monsterUrl = `https://www.dnd5eapi.co/api/monsters/${randomMonster.index}`;
+        const monsterDetailsResponse = await axios.get(monsterUrl);
+        const fullMonsterData = monsterDetailsResponse.data;
+
+        // Step 4: Create the new enemy using the full details from the API
+        let speed;
+        if (typeof fullMonsterData.speed === "object") {
+          speed = Object.entries(fullMonsterData.speed)
+            .map(([type, value]) => `${type}: ${value}`)
+            .join(", ");
+        } else {
+          speed = fullMonsterData.speed;
+        }
+
+        const newEnemy = {
+          name: fullMonsterData.name,
+          health: fullMonsterData.hit_points,
+          enemyType: fullMonsterData.type,
+          size: fullMonsterData.size,
+          alignment: fullMonsterData.alignment,
+          armorClass: fullMonsterData.armor_class.map((ac) => ({
+            type: ac.type,
+            armorValue: ac.value,
+          })),
+          speed: speed,
+          strength: fullMonsterData.strength,
+          dexterity: fullMonsterData.dexterity,
+          constitution: fullMonsterData.constitution,
+          intelligence: fullMonsterData.intelligence,
+          wisdom: fullMonsterData.wisdom,
+          charisma: fullMonsterData.charisma,
+          challengeRating: fullMonsterData.challenge_rating,
+          specialAbilities: fullMonsterData.special_abilities,
+          actions: fullMonsterData.actions.map((action) => ({
+            name: action.name,
+            desc: action.desc,
+            attackBonus: action.attack_bonus || null,
+            count: action.count || null,
+            damage: action.damage
+              ? action.damage.map((d) => ({
+                  damageDice: d.damage_dice,
+                  damageType: d.damage_type ? d.damage_type.name : null,
+                }))
+              : [],
+          })),
+        };
+
+        // Step 5: Save the new enemy as you've done before
+        const savedEnemy = await saveEnemy(newEnemy);
+        const enemyId = savedEnemy.id;
+        saveEnemyAbilityScores(enemyId, savedEnemy);
+      } else {
+        console.error("No monsters found with challenge rating 0");
+      }
+    } catch (error) {
+      console.error("Error creating enemy:", error);
+    }
+  };
+
   const updateAbilityScores = async (enemyId, abilityScores) => {
     try {
       const response = await axios.put(
@@ -150,6 +225,9 @@ const EnemyComponent = () => {
     <div className="monster-container">
       <div className="generate-enemy">
         <button onClick={createEnemy}>Generate Enemy</button>
+        <button onClick={createEnemyWithChallengeRatingZero}>
+          Generate Enemy with Challenge Rating 0
+        </button>
       </div>
 
       {enemy && (

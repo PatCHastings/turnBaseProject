@@ -4,7 +4,11 @@ import axios from "axios";
 import "./fight.css";
 import ScrollingLog from "../logs/ScrollingLog.jsx";
 import TextDamageFX from "../textFXs/TextDamageFX.jsx";
-import { setPlayer, updatePlayerHealth } from "../store/Store";
+import {
+  setPlayer,
+  updatePlayerHealth,
+  updatePlayerExperience,
+} from "../store/Store";
 import { setEnemy, updateEnemyHealth } from "../store/Store";
 
 const FightComponent = () => {
@@ -70,6 +74,11 @@ const FightComponent = () => {
         console.log("Enemy action response:", response.data);
         setCombatLog((prevLog) => [...prevLog, ...response.data.log]);
 
+        // Update player experience
+        if (response.data.playerExperience) {
+          dispatch(updatePlayerExperience(response.data.playerExperience));
+        }
+
         if (response.data.playerTurn) {
           // Now it's the player's turn
           setPlayerTurn(true);
@@ -119,6 +128,7 @@ const FightComponent = () => {
 
         dispatch(updatePlayerHealth(data.playerHealth));
         dispatch(updateEnemyHealth(data.enemyHealth));
+        dispatch(updatePlayerExperience(response.data.playerExperience));
         // Debug logs to confirm updates
         console.log("Updated Player Health:", data.playerHealth);
         console.log("Updated Enemy Health:", data.enemyHealth);
@@ -181,6 +191,7 @@ const FightComponent = () => {
             <div>
               <p>Name: {player.name}</p>
               <p>Health: {player.health}</p>
+              <p>Experience: {player.experience}</p>
               <p>Class: {selectedClass ? selectedClass.name : "N/A"}</p>
               <p>
                 Constitution: {player.constitution}

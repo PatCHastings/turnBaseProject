@@ -6,6 +6,7 @@ import axios from 'axios';
 const initialPlayerState = {
   name: '',
   health: null,
+  experience: 0, 
   characterClass: null,
 };
 
@@ -28,7 +29,12 @@ const playerSlice = createSlice({
       return { ...state, ...action.payload };
     },
     updatePlayerHealth(state, action) {
+      console.log("Updating Player Health:", action.payload);
       state.health = action.payload;
+    },
+    updatePlayerExperience(state, action) {
+      console.log("Updating Player Experience:", action.payload);
+      state.experience = action.payload; 
     },
   },
 });
@@ -42,6 +48,7 @@ const enemySlice = createSlice({
       return { ...state, ...action.payload };
     },
     updateEnemyHealth(state, action) {
+      console.log("Updating Enemy Health:", action.payload);
       state.health = action.payload;
     },
   },
@@ -62,7 +69,7 @@ const classSlice = createSlice({
 });
 
 // Export actions
-export const { setPlayer, updatePlayerHealth } = playerSlice.actions;
+export const { setPlayer, updatePlayerHealth, updatePlayerExperience } = playerSlice.actions;
 export const { setEnemy, updateEnemyHealth } = enemySlice.actions;
 export const { setClasses, setSelectedClass } = classSlice.actions;
 

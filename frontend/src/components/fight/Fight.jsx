@@ -8,6 +8,7 @@ import {
   setPlayer,
   updatePlayerHealth,
   updatePlayerExperience,
+  updatePlayerLevel,
 } from "../store/Store";
 import { setEnemy, updateEnemyHealth } from "../store/Store";
 
@@ -21,6 +22,8 @@ const FightComponent = () => {
   const [actionPending, setActionPending] = useState(false);
   const [combatStarted, setCombatStarted] = useState(false);
   const [playerTurn, setPlayerTurn] = useState(null);
+
+  console.log("Player data:", player);
 
   const startCombat = async () => {
     console.log("Begin Fight clicked");
@@ -77,6 +80,7 @@ const FightComponent = () => {
         // Update player experience
         if (response.data.playerExperience) {
           dispatch(updatePlayerExperience(response.data.playerExperience));
+          dispatch(updatePlayerLevel(response.data.playerLevel));
         }
 
         if (response.data.playerTurn) {
@@ -128,7 +132,8 @@ const FightComponent = () => {
 
         dispatch(updatePlayerHealth(data.playerHealth));
         dispatch(updateEnemyHealth(data.enemyHealth));
-        dispatch(updatePlayerExperience(response.data.playerExperience));
+        dispatch(updatePlayerExperience(data.playerExperience));
+        dispatch(updatePlayerLevel(data.playerLevel));
         // Debug logs to confirm updates
         console.log("Updated Player Health:", data.playerHealth);
         console.log("Updated Enemy Health:", data.enemyHealth);
@@ -192,6 +197,7 @@ const FightComponent = () => {
               <p>Name: {player.name}</p>
               <p>Health: {player.health}</p>
               <p>Experience: {player.experience}</p>
+              <p>Level: {player.level}</p>
               <p>Class: {selectedClass ? selectedClass.name : "N/A"}</p>
               <p>
                 Constitution: {player.constitution}

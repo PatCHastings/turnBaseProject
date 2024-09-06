@@ -7,6 +7,7 @@ const initialPlayerState = {
   name: '',
   health: null,
   experience: 0, 
+  level: 0,
   characterClass: null,
 };
 
@@ -35,6 +36,10 @@ const playerSlice = createSlice({
     updatePlayerExperience(state, action) {
       console.log("Updating Player Experience:", action.payload);
       state.experience = action.payload; 
+    },
+    updatePlayerLevel(state, action) {
+      console.log("Updating Player Level:", action.payload);
+      state.level = action.payload;
     },
   },
 });
@@ -69,7 +74,7 @@ const classSlice = createSlice({
 });
 
 // Export actions
-export const { setPlayer, updatePlayerHealth, updatePlayerExperience } = playerSlice.actions;
+export const { setPlayer, updatePlayerHealth, updatePlayerExperience, updatePlayerLevel } = playerSlice.actions;
 export const { setEnemy, updateEnemyHealth } = enemySlice.actions;
 export const { setClasses, setSelectedClass } = classSlice.actions;
 
